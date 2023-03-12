@@ -1,0 +1,4 @@
+opencv-python
+PyQt5
+pandas
+fastdeploy-python
