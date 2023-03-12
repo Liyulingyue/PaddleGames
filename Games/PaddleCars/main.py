@@ -107,8 +107,8 @@ class Window(QWidget):
                 self.direction = math.acos((top_y - bottom_y) / ((top_x - bottom_x) ** 2 + (top_y - bottom_y) ** 2) ** (1 / 2)) - math.pi/2
 
             # 模糊
-            img = cv2.resize(img, (40, 40))
-            img = cv2.resize(img, (640, 640), interpolation=cv2.INTER_NEAREST)
+            # img = cv2.resize(img, (40, 40))
+            # img = cv2.resize(img, (640, 640), interpolation=cv2.INTER_NEAREST)
 
             img[int(top_y)-10:int(top_y)+10,int(top_x)-10:int(top_x)+10] = [0, 0, 255]
             img[int(bottom_y) - 10:int(bottom_y) + 10, int(bottom_x) - 10:int(bottom_x) + 10] = [0, 0, 255]
