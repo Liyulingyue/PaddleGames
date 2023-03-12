@@ -5,4 +5,5 @@ Some games based on paddlepaddle
 
 ## 目前实现的小游戏
 - PaddleCars 基于关键点检测的竞速小游戏
-- PaddleSnack 贪吃蛇小游戏（待迁移到github）
+- PaddleSnack 贪吃蛇小游戏
+- PaddleBalance 平衡木小游戏
