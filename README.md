@@ -11,7 +11,7 @@ Some games based on paddlepaddle
 # DEMO OPEN!
 提供了简单开发的demo！打开demo，不用挪动接口！只需要修改Game_object即可！
 
-# Call for Contributor(贡献招募)
+# Call for Contribuimg[int(top_y)-10:int(top_y)+10,int(top_x)-10:int(top_x)+10] = [0, 0, 255]tor(贡献招募)
 
 由于我(Liyulingyue)并不是一个非常成熟的仓库管理员 & 开发者，因此整个仓库有一些不足之处，下面是当前仓库中的一些亟待解决的事项~ 
 
