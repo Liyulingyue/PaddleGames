@@ -26,7 +26,10 @@ class Window(QWidget):
 
     def __init__(self):
         super().__init__()
-
+        # self.game_width, self.game_height = [500, 500]
+        screen_width, screen_height = [QApplication.desktop().screenGeometry().width() - 100,
+                                       QApplication.desktop().screenGeometry().height() - 100]
+        self.game_size = min(int(screen_width/2), screen_height)
         # 准备初始地图
         self.map = np.ones([700, 500, 3]).astype('uint8') * 0
 
@@ -54,12 +57,14 @@ class Window(QWidget):
         self.setLayout(grid)
 
         self.Game_Box = QLabel()  # 定义显示视频的Label
-        self.Game_Box.setFixedSize(500, 500)
+        # self.Game_Box.setFixedSize(500, 500)
+        self.Game_Box.setFixedSize(self.game_size, self.game_size)
         grid.addWidget(self.Game_Box, 0, 0, 20, 20)
         self.Game_Box.setMouseTracking(True)
 
         self.Pred_Box = QLabel()  # 定义显示视频的Label
-        self.Pred_Box.setFixedSize(500, 500)
+        # self.Pred_Box.setFixedSize(500, 500)
+        self.Pred_Box.setFixedSize(self.game_size, self.game_size)
         grid.addWidget(self.Pred_Box, 0, 20, 20, 20)
 
         self.setWindowTitle('Paddle Cars')
@@ -86,7 +91,8 @@ class Window(QWidget):
         # read pic from camera
         _, img = self.camera.read()  # 从视频流中读取
         img = cv2.flip(img, 1) # 摄像头画面反转
-        img2 = cv2.resize(img, (500, 500))  # 把读到的帧的大小重新设置为 640x480
+        # img2 = cv2.resize(img, (500, 500))  # 把读到的帧的大小重新设置为 640x480
+        img2 = cv2.resize(img, (self.game_size, self.game_size))
         showPic = QImage(img2, img2.shape[1], img2.shape[0], QImage.Format_BGR888)
         self.Pred_Box.setPixmap(QPixmap.fromImage(showPic))
 
@@ -112,7 +118,9 @@ class Window(QWidget):
 
             img[int(top_y)-10:int(top_y)+10,int(top_x)-10:int(top_x)+10] = [0, 0, 255]
             img[int(bottom_y) - 10:int(bottom_y) + 10, int(bottom_x) - 10:int(bottom_x) + 10] = [0, 0, 255]
-            showPic = QImage(img, img.shape[1], img.shape[0], QImage.Format_BGR888)
+
+            img = cv2.resize(img, (self.game_size, self.game_size))
+            showPic = QImage(img, img.shape[1], img.shape[0], img.shape[1]*3, QImage.Format_BGR888)
             self.Pred_Box.setPixmap(QPixmap.fromImage(showPic))
 
         except:
@@ -133,7 +141,9 @@ class Window(QWidget):
         # 更新画面文字
         self.addText(current_map)
 
-        showPic = QImage(current_map, current_map.shape[1], current_map.shape[0], QImage.Format_BGR888)
+        # resize
+        current_map = cv2.resize(current_map, (self.game_size, self.game_size))
+        showPic = QImage(current_map, current_map.shape[1], current_map.shape[0], current_map.shape[1]*3 ,QImage.Format_BGR888)
         self.Game_Box.setPixmap(QPixmap.fromImage(showPic))
 
         # 更新框体展示状态
