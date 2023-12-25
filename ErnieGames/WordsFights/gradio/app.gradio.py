@@ -1,5 +1,5 @@
 import os
-os.system("pip install --upgrade erniebot")
+# os.system("pip install --upgrade erniebot")
 
 import gradio as gr
 from gr_functions import *
