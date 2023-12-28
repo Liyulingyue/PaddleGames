@@ -1,25 +1,45 @@
 import socket
+import threading
 
 
-def start_client():
-    # 创建socket对象
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+class Client:
+    def __init__(self, host='192.168.2.173', port=12345):
+        self.host = host
+        self.port = port
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # 连接服务器
-    host = '10.36.22.106'  # 服务器的主机名或IP地址
-    port = 12345  # 服务器的端口号（与服务器端代码中的端口号相同）
-    client_socket.connect((host, port))
+    def start(self):
+        self.client_socket.connect((self.host, self.port))
+        self.send_thread = threading.Thread(target=self.send_messages)
+        self.receive_thread = threading.Thread(target=self.receive_messages)
+        self.send_thread.start()
+        self.receive_thread.start()
 
-    # 循环发送和接收数据
-    while True:
-        data = input('Enter message: ')
-        client_socket.sendall(data.encode())  # 将消息编码为字节流并发送
-        received_data = client_socket.recv(1024)  # 接收服务器发送的数据
-        print('Received:', received_data.decode())  # 解码接收到的数据并打印出来
+    def send_messages(self):
+        while True:
+            data = input('Enter message: ')
+            if data:
+                self.client_socket.sendall(data.encode())
 
-    # 关闭连接
-    client_socket.close()
+    def receive_messages(self):
+        while True:
+            received_data = self.client_socket.recv(1024)
+            if received_data:
+                print('Received:', received_data.decode())
+            else:
+                print('Connection closed by server.')
+                break
+
+    def close_connection(self):
+        self.client_socket.close()
+        self.send_thread.join()
+        self.receive_thread.join()
+
+    # 创建客户端对象并启动线程
 
 
-# 启动客户端
-start_client()
+if __name__ == "__main__":
+    client = Client()
+    client.start()
+    # 当需要关闭连接时，调用close_connection方法
+    # client.close_connection()
