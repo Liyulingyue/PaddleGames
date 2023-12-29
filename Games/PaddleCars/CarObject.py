@@ -26,9 +26,10 @@ class car(object):
         self.x -= int(10*angle)
 
         # 更新障碍物
-        if len(self.barrier_list) == 0 or random.random()<0.02:
+        if len(self.barrier_list) == 0 or random.random()<0.03:
             # x,y,speed
-            self.barrier_list.append([int(random.random() * 200 + 150), -50, int(random.random() * 10 + 5)])
+            # self.barrier_list.append([int(random.random() * 200 + 150), -50, int(random.random() * 10 + 5)])
+            self.barrier_list.append([int(random.random() * 220 + 140), -50, int(random.random() * 10 + 5)])
 
         # 更新位置
         for i in range(len(self.barrier_list)):
@@ -43,8 +44,9 @@ class car(object):
 
         # 删除无效数据
         self.barrier_list = [barrier for barrier in self.barrier_list if barrier[1]<549]
-        if self.x < 100: self.x = 100
-        if self.x > 400: self.x = 400
+        # 避免一直卡在边缘
+        if self.x < 120: self.x = 120
+        if self.x > 380: self.x = 380
 
         # 车道线位置更新
         self.COUNT += 25

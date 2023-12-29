@@ -105,7 +105,7 @@ class Window(QWidget):
             bottom_x = (result.keypoints[self.down_key_points[0]][0] + result.keypoints[self.down_key_points[1]][0]) / 2
 
             if self.game_status == 0 or self.game_status == 2:
-                if abs(top_x-bottom_x) + abs(top_y-bottom_y) < 50:
+                if abs(top_x-bottom_x) + abs(top_y-bottom_y) < 30:
                     # 游戏启动，更新画面状态
                     self.game_status = 1
                     self.car.__init__()

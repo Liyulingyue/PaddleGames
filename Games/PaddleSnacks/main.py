@@ -29,7 +29,7 @@ class snack(object):
         self.direction = 0
         self.base_direction = math.pi/2
         self.body_list = [[int(self.x), int(self.y)]]
-        self.step_size = 3
+        self.step_size = 10
         self.body_size = 1
 
     def update(self):

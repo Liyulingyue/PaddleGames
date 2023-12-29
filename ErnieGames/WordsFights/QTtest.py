@@ -9,44 +9,58 @@ class MyWindow(QWidget):
         super().__init__()
         self.elements = {}
         self.width = 1600
-        self.height = 800
+        self.height = 900
         self.initUI()
 
     def initUI(self):
         Img_obj = { # x, y, w, h
-            "User1_Img_User": ['background.png', 50, 50, 50, 50],
-            "User1_Img_Soldier": ['background.png', 50, 110, 50, 50],
-            "User1_Img_Rider": ['background.png', 50, 170, 50, 50],
-            "User1_Img_Archer": ['background.png', 50, 230, 50, 50],
-            "User1_Img_Choosed": ['background.png', 50, 290, 50, 50],
-            "User2_Img_User": ['background.png', 1400, 50, 50, 50],
-            "User2_Img_Soldier": ['background.png', 1400, 110, 50, 50],
-            "User2_Img_Rider": ['background.png', 1400, 170, 50, 50],
-            "User2_Img_Archer": ['background.png', 1400, 230, 50, 50],
-            "User2_Img_Choosed": ['background.png', 1400, 290, 50, 50],
-            "Img_Main": ['background.png', 300, 50, 700, 700],
+            "User1_Img_User": ['background.png', 0.125, 0.25, 0.22, 0.22],
+            "User1_Img_Soldier": ['background.png', 0.0625, 0.49, 0.073, 0.073],
+            "User1_Img_Rider": ['background.png', 0.0625, 0.59, 0.073, 0.073],
+            "User1_Img_Archer": ['background.png', 0.0625, 0.69, 0.073, 0.073],
+            "User1_Img_Choosed": ['background.png', 0.0625, 0.79, 0.073, 0.073],
+            "User2_Img_User": ['background.png', 0.875, 0.25, 0.22, 0.22],
+            "User2_Img_Soldier": ['background.png', 0.825, 0.49, 0.073, 0.073],
+            "User2_Img_Rider": ['background.png', 0.825, 0.59, 0.073, 0.073],
+            "User2_Img_Archer": ['background.png', 0.825, 0.69, 0.073, 0.073],
+            "User2_Img_Choosed": ['background.png', 0.825, 0.79, 0.073, 0.073],
+            "Img_Main": ['background.png', 0.5, 0.5, 0.98, 0.98],
         }
         Text_obj = {
-            "User1_Text_User": ['用户1', 110, 50, 50, 50],
-            "User1_Text_Soldier": ['士兵', 110, 110, 50, 50],
-            "User1_Text_Rider": ['骑兵', 110, 170, 50, 50],
-            "User1_Text_Archer": ['弓兵', 110, 230, 50, 50],
-            "User1_Text_Choosed": ['未选择', 110, 290, 50, 50],
-            "User2_Text_User": ['用户2', 1460, 50, 50, 50],
-            "User2_Text_Soldier": ['士兵', 1460, 110, 50, 50],
-            "User2_Text_Rider": ['骑兵', 1460, 170, 50, 50],
-            "User2_Text_Archer": ['弓兵', 1460, 230, 50, 50],
-            "User2_Text_Choosed": ['未选择', 1460, 290, 50, 50]
+            "User1_Text_User": ['用户1', 0.125, 0.4, 0.18, 0.067],
+            "User1_Text_Soldier": ['士兵', 0.1375, 0.49, 0.18, 0.073],
+            "User1_Text_Rider": ['骑兵', 0.1375, 0.59, 0.18, 0.073],
+            "User1_Text_Archer": ['弓兵', 0.1375, 0.69, 0.18, 0.073],
+            "User1_Text_Choosed": ['未选择', 0.1375, 0.79, 0.18, 0.073],
+            "User2_Text_User": ['用户2', 0.875, 0.4, 0.18, 0.067],
+            "User2_Text_Soldier": ['士兵', 0.9125, 0.49, 0.18, 0.073],
+            "User2_Text_Rider": ['骑兵', 0.9125, 0.59, 0.18, 0.073],
+            "User2_Text_Archer": ['弓兵', 0.9125, 0.69, 0.18, 0.073],
+            "User2_Text_Choosed": ['未选择', 0.9125, 0.79, 0.18, 0.073]
         }
 
         for key in Img_obj:
             self.elements[key] = QLabel(self)
-            pixmap = QPixmap(Img_obj[key][0])  # 加载本地图片
+            fig_path, x, y, w, h = Img_obj[key]
+            w = int(w * self.height) if w<1 else w
+            h = int(h * self.height) if h<1 else h
+            x = int(x * self.width - w / 2) if x<1 else x
+            y = int(y * self.height - h / 2) if y<1 else y
+            pixmap = QPixmap(fig_path)  # 加载本地图片
+            pixmap = pixmap.scaled(w, h)
             self.elements[key].setPixmap(pixmap)  # 将图片设置到QLabel中
-            self.elements[key].setGeometry(Img_obj[key][1], Img_obj[key][2], Img_obj[key][3], Img_obj[key][4])  # 设置标签的位置和大小
+            # self.elements[key].setFixedSize(w, h)
+            # self.elements[key].move(x, y)
+            self.elements[key].setGeometry(x, y, w, h)  # 设置标签的位置和大小
         for key in Text_obj:
-            self.elements[key] = QLabel(Text_obj[key][0], self)
-            self.elements[key].move(Text_obj[key][1], Text_obj[key][2])
+            text, x, y, w, h = Text_obj[key]
+            w = int(w * self.height) if w<1 else w
+            h = int(h * self.height) if h<1 else h
+            x = int(x * self.width - w / 2) if x<1 else x
+            y = int(y * self.height - h / 2) if y<1 else y
+            self.elements[key] = QLabel(self)
+            self.elements[key].setText(text)
+            self.elements[key].move(x, y)
 
         # 设置窗口的位置和大小
         self.setGeometry(0, 0, self.width, self.height)
