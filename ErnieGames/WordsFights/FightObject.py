@@ -33,6 +33,7 @@ class FightObject(object):
 
     def set_target_pos(self, user, role, target_pos):
         # TODO: 需要增加检测，避免两个士兵移动到相同的位置，从而重叠
+        # TODO: 可以返回一段STR作为回执，例如告诉玩家移动失败
         # target_pos = [target_x, target_y]
         self.data[user][role]["target_x"] = target_pos[0]
         self.data[user][role]["target_y"] = target_pos[1]
