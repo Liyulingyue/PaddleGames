@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
 class MyWindow(QWidget):
@@ -14,12 +14,12 @@ class MyWindow(QWidget):
 
     def initUI(self):
         Img_obj = { # x, y, w, h
-            "User1_Img_User": ['background.png', 0.125, 0.25, 0.22, 0.22],
+            "User1_Img_User": ['./Source/Images/User1.png', 0.125, 0.25, 0.22, 0.22],
             "User1_Img_Soldier": ['background.png', 0.0625, 0.49, 0.073, 0.073],
             "User1_Img_Rider": ['background.png', 0.0625, 0.59, 0.073, 0.073],
             "User1_Img_Archer": ['background.png', 0.0625, 0.69, 0.073, 0.073],
             "User1_Img_Choosed": ['background.png', 0.0625, 0.79, 0.073, 0.073],
-            "User2_Img_User": ['background.png', 0.875, 0.25, 0.22, 0.22],
+            "User2_Img_User": ['./Source/Images/User2.png', 0.875, 0.25, 0.22, 0.22],
             "User2_Img_Soldier": ['background.png', 0.825, 0.49, 0.073, 0.073],
             "User2_Img_Rider": ['background.png', 0.825, 0.59, 0.073, 0.073],
             "User2_Img_Archer": ['background.png', 0.825, 0.69, 0.073, 0.073],
@@ -37,6 +37,14 @@ class MyWindow(QWidget):
             "User2_Text_Rider": ['骑兵', 0.9125, 0.59, 0.18, 0.073],
             "User2_Text_Archer": ['弓兵', 0.9125, 0.69, 0.18, 0.073],
             "User2_Text_Choosed": ['未选择', 0.9125, 0.79, 0.18, 0.073]
+        }
+        Line_obj = {
+            "User1_Line_Input":["", 0.08, 0.89, 0.18, 0.073],
+            "User2_Line_Input":["", 0.85, 0.89, 0.18, 0.073],
+        }
+        Button_obj = {
+            "User1_Button_Confirm":["发送", 0.18, 0.89, 0.073, 0.073],
+            "User2_Line_Input":["发送", 0.95, 0.89, 0.073, 0.073],
         }
 
         for key in Img_obj:
@@ -60,6 +68,22 @@ class MyWindow(QWidget):
             y = int(y * self.height - h / 2) if y<1 else y
             self.elements[key] = QLabel(self)
             self.elements[key].setText(text)
+            self.elements[key].move(x, y)
+        for key in Line_obj:
+            text, x, y, w, h = Line_obj[key]
+            w = int(w * self.height) if w<1 else w
+            h = int(h * self.height) if h<1 else h
+            x = int(x * self.width - w / 2) if x<1 else x
+            y = int(y * self.height - h / 2) if y<1 else y
+            self.elements[key] = QLineEdit(self)
+            self.elements[key].move(x, y)
+        for key in Button_obj:
+            text, x, y, w, h = Button_obj[key]
+            w = int(w * self.height) if w<1 else w
+            h = int(h * self.height) if h<1 else h
+            x = int(x * self.width - w / 2) if x<1 else x
+            y = int(y * self.height - h / 2) if y<1 else y
+            self.elements[key] = QPushButton(text, self)
             self.elements[key].move(x, y)
 
         # 设置窗口的位置和大小
