@@ -106,7 +106,7 @@ class MyWindow(QWidget):
         if event.button() == Qt.LeftButton:
             for key in ["Soldier", "Rider", "Archer"]:
                 flag = 0
-                hp, x_percent, y_percent = self.gameobj["User1"][key]
+                hp, x_percent, y_percent, _, _ = self.gameobj["User1"][key]
                 if hp<=0: continue
                 _, _x, _y, _w, _h = self.Img_obj[f"User1_Img_{key}"]
                 if _x-_w*self.height/self.width/2<x<_x+_w*self.height/self.width/2 and _y-_h/2<y<_y+_h/2:
@@ -151,12 +151,12 @@ class MyWindow(QWidget):
     def draw_frame(self):
         img = get_img_and_resize(self.Img_obj, "Img_Main")
         for key in self.gameobj["User1"]:
-            hp, x_percent, y_percent = self.gameobj["User1"][key]
+            hp, x_percent, y_percent, _, _ = self.gameobj["User1"][key]
             if hp<0: continue
             part_img = get_img_and_resize(self.Img_obj, f"User1_Img_{key}")
             img = paste_image(img, part_img, [x_percent, y_percent])
         for key in self.gameobj["User2"]:
-            hp, x_percent, y_percent = self.gameobj["User2"][key]
+            hp, x_percent, y_percent, _, _ = self.gameobj["User2"][key]
             if hp < 0: continue
             part_img = get_img_and_resize(self.Img_obj, f"User2_Img_{key}")
             img = paste_image(img, part_img, [x_percent, y_percent])
