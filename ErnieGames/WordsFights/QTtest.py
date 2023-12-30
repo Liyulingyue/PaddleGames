@@ -6,6 +6,8 @@ from PyQt5.QtCore import *
 from GameObj import *
 from utils import *
 import cv2
+from client import Client
+import json
 
 class MyWindow(QWidget):
     def __init__(self):
@@ -16,6 +18,10 @@ class MyWindow(QWidget):
         self.gameobj = get_init_gameobj()
         self.initUI()
         self.draw_frame()
+        self.client = Client()
+        self.client.start()
+        self.initClock()
+        self.user = "User1"
 
     def initUI(self):
         Img_obj = { # x, y, w, h
@@ -50,7 +56,7 @@ class MyWindow(QWidget):
         }
         Button_obj = {
             "User1_Button_Confirm":["发送", 0.18, 0.89, 0.073, 0.073],
-            "User2_Line_Input":["发送", 0.95, 0.89, 0.073, 0.073],
+            "User2_Button_Confirm":["发送", 0.95, 0.89, 0.073, 0.073],
         }
 
         for key in Img_obj:
@@ -74,7 +80,8 @@ class MyWindow(QWidget):
             y = int(y * self.height - h / 2) if y<1 else y
             self.elements[key] = QLabel(self)
             self.elements[key].setText(text)
-            self.elements[key].move(x, y)
+            # self.elements[key].move(x, y)
+            self.elements[key].setGeometry(x, y, w, h)  # 设置标签的位置和大小
         for key in Line_obj:
             text, x, y, w, h = Line_obj[key]
             w = int(w * self.height) if w<1 else w
@@ -91,11 +98,18 @@ class MyWindow(QWidget):
             y = int(y * self.height - h / 2) if y<1 else y
             self.elements[key] = QPushButton(text, self)
             self.elements[key].move(x, y)
+            self.elements[key].clicked.connect(self.send_prompt)
 
         # 设置窗口的位置和大小
         self.setGeometry(0, 0, self.width, self.height)
         self.setWindowTitle('Words Fight')
         self.show()
+
+    def initClock(self):
+        # 通过定时器读取数据
+        self.flush_clock = QTimer()  # 定义定时器，用于控制显示视频的帧率
+        self.flush_clock.start(100)   # 定时器开始计时100ms
+        self.flush_clock.timeout.connect(self.update_frame)  # 若定时器结束，show_frame()
 
     def mouseReleaseEvent(self, event):
         pos = event.pos()
@@ -106,9 +120,9 @@ class MyWindow(QWidget):
         if event.button() == Qt.LeftButton:
             for key in ["Soldier", "Rider", "Archer"]:
                 flag = 0
-                hp, x_percent, y_percent, _, _ = self.gameobj["User1"][key]
+                hp, x_percent, y_percent, _, _, _ = self.gameobj[self.user][key]
                 if hp<=0: continue
-                _, _x, _y, _w, _h = self.Img_obj[f"User1_Img_{key}"]
+                _, _x, _y, _w, _h = self.Img_obj[f"{self.user}_Img_{key}"]
                 if _x-_w*self.height/self.width/2<x<_x+_w*self.height/self.width/2 and _y-_h/2<y<_y+_h/2:
                     flag = 1
                 _, __x, __y, __w, __h = self.Img_obj[f"Img_Main"]
@@ -117,16 +131,16 @@ class MyWindow(QWidget):
                 if _x-_w*self.height/self.width/2<x<_x+_w*self.height/self.width/2 and _y-_h/2<y<_y+_h/2:
                     flag = 1
                 if flag == 1:
-                    self.Img_obj["User1_Img_Choosed"][0] = f'./Source/Images/{key}1.png'
-                    fig_path, x, y, w, h = self.Img_obj["User1_Img_Choosed"]
+                    self.Img_obj[f"{self.user}_Img_Choosed"][0] = f'./Source/Images/{key}1.png'
+                    fig_path, x, y, w, h = self.Img_obj[f"{self.user}_Img_Choosed"]
                     w = int(w * self.height) if w < 1 else w
                     h = int(h * self.height) if h < 1 else h
                     x = int(x * self.width - w / 2) if x < 1 else x
                     y = int(y * self.height - h / 2) if y < 1 else y
                     pixmap = QPixmap(fig_path)  # 加载本地图片
                     pixmap = pixmap.scaled(w, h)
-                    self.elements["User1_Img_Choosed"].setPixmap(pixmap)  # 将图片设置到QLabel中
-                    self.elements["User1_Text_Choosed"].setText(f"{key}")
+                    self.elements[f"{self.user}_Img_Choosed"].setPixmap(pixmap)  # 将图片设置到QLabel中
+                    self.elements[f"{self.user}_Text_Choosed"].setText(f"{key}")
         elif event.button() == Qt.RightButton:
             _, _x, _y, _w, _h = self.Img_obj[f"Img_Main"]
             _x_real = _x*self.width - _w/2*self.height
@@ -139,25 +153,33 @@ class MyWindow(QWidget):
             new_y_p = y_based/_h_real
 
             if _x-_w*self.height/self.width/2<x<_x+_w*self.height/self.width/2 and _y-_h/2<y<_y+_h/2:
-                key = self.elements["User1_Text_Choosed"].text()
+                key = self.elements[f"{self.user}_Text_Choosed"].text()
                 if key in ["Soldier", "Rider", "Archer"]:
-                    self.gameobj["User1"][key][1] = new_x_p
-                    self.gameobj["User1"][key][2] = new_y_p
-
-                    self.draw_frame()
+                    self.client.set_send_str(f"MOVE,{self.user},{key},{str(new_x_p)},{str(new_y_p)}")
+                    # self.gameobj["User1"][key][1] = new_x_p
+                    # self.gameobj["User1"][key][2] = new_y_p
+                    # self.draw_frame()
         else:
             pass
+
+    def update_frame(self):
+        raw_str = self.client.get_received_str()
+        if raw_str != "":
+            self.gameobj = json.loads(raw_str)
+            self.draw_frame()
 
     def draw_frame(self):
         img = get_img_and_resize(self.Img_obj, "Img_Main")
         for key in self.gameobj["User1"]:
-            hp, x_percent, y_percent, _, _ = self.gameobj["User1"][key]
-            if hp<0: continue
+            hp, x_percent, y_percent, _, _, prompt = self.gameobj["User1"][key]
+            self.elements[f"User1_Text_{key}"].setText(f"血量: {str(hp)}\n阵法: {prompt}")
+            if hp<=0: continue
             part_img = get_img_and_resize(self.Img_obj, f"User1_Img_{key}")
             img = paste_image(img, part_img, [x_percent, y_percent])
         for key in self.gameobj["User2"]:
-            hp, x_percent, y_percent, _, _ = self.gameobj["User2"][key]
-            if hp < 0: continue
+            hp, x_percent, y_percent, _, _, prompt = self.gameobj["User2"][key]
+            self.elements[f"User2_Text_{key}"].setText(f"血量: {str(hp)}\n阵法: {prompt}")
+            if hp<=0: continue
             part_img = get_img_and_resize(self.Img_obj, f"User2_Img_{key}")
             img = paste_image(img, part_img, [x_percent, y_percent])
         image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -166,6 +188,11 @@ class MyWindow(QWidget):
         qtImage = QImage(image.data, width, height, bytesPerLine, QImage.Format_RGB888)
         pixmap = QPixmap.fromImage(qtImage)
         self.elements["Img_Main"].setPixmap(pixmap)  # 将图片设置到QLabel中
+
+    def send_prompt(self):
+        prompt = self.elements[f"{self.user}_Line_Input"].text()
+        key = self.elements[f"{self.user}_Text_Choosed"].text()
+        self.client.set_send_str(f"ERNIE,{self.user},{key},{prompt}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
