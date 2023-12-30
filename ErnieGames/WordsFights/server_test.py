@@ -5,6 +5,7 @@ import time
 from chat_llm import *
 from FightObject import FightObject
 
+
 class Server:
     def __init__(self, port=12345):
         self.port = port

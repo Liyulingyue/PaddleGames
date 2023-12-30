@@ -7,6 +7,11 @@ class FightObject(object):
         self.data = self.init_data()
 
     def init_data(self):
+        data = FightObject._init_data()
+        return data
+
+    @staticmethod
+    def _init_data():
         data = {}
         for user in ["User1", "User2"]:
             data[user] = {}
@@ -95,18 +100,23 @@ class FightObject(object):
         self.data[user][role]["target_y"] = target_pos[1]
 
     def get_dispatched_str(self):
-        data = {}
-        for user in ["User1", "User2"]:
-            data[user] = {}
-            for role in ["Soldier", "Rider", "Archer"]:
-                data[user][role] = [self.data[user][role]["hp"],
-                                    self.data[user][role]["x"],
-                                    self.data[user][role]["y"],
-                                    self.data[user][role]["target_x"],
-                                    self.data[user][role]["target_y"],
-                                    self.data[user][role]["prompt"]]
-        dispatched_str = json.dumps(data)
+        dispatched_dict = FightObject._data2dispatched_dict(self.data)
+        dispatched_str = json.dumps(dispatched_dict)
         return dispatched_str
+
+    @staticmethod
+    def _data2dispatched_dict(data):
+        dispatched_dict = {}
+        for user in ["User1", "User2"]:
+            dispatched_dict[user] = {}
+            for role in ["Soldier", "Rider", "Archer"]:
+                dispatched_dict[user][role] = [data[user][role]["hp"],
+                                               data[user][role]["x"],
+                                               data[user][role]["y"],
+                                               data[user][role]["target_x"],
+                                               data[user][role]["target_y"],
+                                               data[user][role]["prompt"]]
+        return dispatched_dict
 
     def _get_speed_of_role(self, role):
         if role == "Soldier":
@@ -148,6 +158,11 @@ class FightObject(object):
             new_y = y + direction[1] * speed
         return new_x, new_y
 
+    @staticmethod
+    def get_default_dict():
+        data = FightObject._init_data()
+        dispatched_dict = FightObject._data2dispatched_dict(data)
+        return dispatched_dict
 
 if __name__ == "__main__":
     fightobj = FightObject()

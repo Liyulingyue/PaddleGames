@@ -2,7 +2,7 @@ import erniebot
 import json
 import datetime
 # 一个自定义文件用来存放token，请自行到自己账号主页复制自己的token替换erniebot
-from tokens import erniebot_access_token
+from .tokens import erniebot_access_token
 
 def get_llm_answer(prompt):
     erniebot.api_type = 'aistudio'
