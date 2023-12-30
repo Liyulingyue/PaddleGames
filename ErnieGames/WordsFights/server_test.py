@@ -16,6 +16,7 @@ class Server:
         self.message_queue = queue.Queue()  # 添加发送消息队列
         self.move_queue = queue.Queue() # 移动请求消息队列
         self.ernie_queue = queue.Queue() # prompt消息队列
+        self.ernied_queue = queue.Queue() # 处理好的prompt消息队列
         self.fight_obj = FightObject()
 
     def start(self):
@@ -35,8 +36,15 @@ class Server:
     def update_fight_obj(self):
         """定期更新fight_obj对象的方法"""
         while True:
+            while not self.move_queue.empty():
+                conn, addr, data = self.move_queue.get()
+                move_str = data.decode()
+                _, user, role, target_x, target_y = move_str.split(",")
+                self.fight_obj.set_target_pos(user, role, [float(target_x), float(target_y)])
+            while not self.ernied_queue.empty():
+                user,role,ATK,DEF,elem,prompt = self.ernied_queue.get()
+                self.fight_obj.set_prompt_info(user, role, ATK=ATK, DEF=DEF, element=elem, prompt=prompt)
             self.fight_obj.update()  # 调用fight_obj的update方法
-            # print(self.fight_obj.get_dispatched_str())
             self.message_queue.put(self.fight_obj.get_dispatched_str())
             time.sleep(0.1)  # 等待0.1秒
 
@@ -62,7 +70,9 @@ class Server:
                 else:
                     with self.lock:
                         if not data.decode().startswith("ERNIE"):
+                            # if data.decode().startswith("MOVE"):
                             self.move_queue.put((conn, addr, data))  # 将消息添加到队列中
+                            print(data.decode())
                         else:
                             self.ernie_queue.put((conn, addr, data))  # 将消息添加到队列中
             else:
@@ -76,7 +86,7 @@ class Server:
                     for c, addr in self.connections:
                         # if c != conn:  # 避免将消息发回给发送者自己
                         c.sendall(data.encode())
-                print(f"Broadcasted message: {data}")
+                # print(f"Broadcasted message: {data}")
             else:
                 time.sleep(0.1)  # 稍作休眠，避免忙等待
 
@@ -84,8 +94,14 @@ class Server:
         while True:
             if not self.ernie_queue.empty():
                 conn, addr, data = self.ernie_queue.get()  # 获取并移除队列中的第一个消息
-                answer = get_llm_answer(data.decode())
-                print(answer)
+                ernie_str = data.decode()
+                _, user, role, prompt = ernie_str.split(",")
+                # answer = get_llm_answer(data.decode())
+                # TODO: 以多线程的方式执行LLM，即对于每个Prompt都开一个线程，互不干扰，可能需要考虑搞6个sdk支持并发
+                def prompt2feature(prompt):
+                    return 3, 1, "水", prompt
+                ATK, DEF, elem, prompt = prompt2feature(prompt)
+                self.ernied_queue.put((user,role,ATK,DEF,elem,prompt))
             else:
                 time.sleep(0.1)  # 稍作休眠，避免忙等待
 

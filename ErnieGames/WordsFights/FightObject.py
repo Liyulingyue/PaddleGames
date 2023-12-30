@@ -41,8 +41,10 @@ class FightObject(object):
                     self.data[user][role]["y"] = new_y
 
         # 所有士兵检索最近一个地方单位，进行攻击，扣除相应单位血量，需要按照属性计算克制关系
-        base_user = "User1"
-        another_user = "User2"
+        self._update_hp("User1", "User2")
+        self._update_hp("User2", "User1")
+
+    def _update_hp(self, base_user, another_user):
         for role in self.data[base_user]:
             nearest_role = ""
             nearest_distance = 2 # the max distance is sqrt(2)
@@ -71,15 +73,14 @@ class FightObject(object):
                         nearest_role = role_
             if nearest_role in ["Soldier", "Rider", "Archer"]:
                 ATK = self.data[base_user][role]["ATK"]
-                DEF_ = self.data[another_user][role_]["DEF"]
+                DEF_ = self.data[another_user][nearest_role]["DEF"]
                 element = self.data[base_user][role]["element"]
                 element_ = self.data[another_user][role]["element"]
                 damage = max(0, ATK-DEF_)
-                hp_ = self.data[another_user][role_]["hp"]
+                hp_ = self.data[another_user][nearest_role]["hp"]
                 hp_ = hp_ - damage
                 # TODO: 增加更多的伤害交互
-                self.data[another_user][role_]["hp"] = hp_
-
+                self.data[another_user][nearest_role]["hp"] = hp_
 
     def set_prompt_info(self, user, role, **kwargs):
         for key in ["prompt", "ATK", "DEF", "element"]:
@@ -102,7 +103,8 @@ class FightObject(object):
                                     self.data[user][role]["x"],
                                     self.data[user][role]["y"],
                                     self.data[user][role]["target_x"],
-                                    self.data[user][role]["target_y"]]
+                                    self.data[user][role]["target_y"],
+                                    self.data[user][role]["prompt"]]
         dispatched_str = json.dumps(data)
         return dispatched_str
 
