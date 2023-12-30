@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 from FightObject import fightobj
 from utils import *
 import cv2
-from client import Client
+from .server_and_client.client import Client
 import json
 
 class MyWindow(QWidget):

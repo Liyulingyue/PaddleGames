@@ -2,8 +2,8 @@ import socket
 import threading
 import queue
 import time
-from chat_llm import *
-from FightObject import FightObject
+from ..llm.chat_llm import *
+from ..FightObject import FightObject
 
 class Server:
     def __init__(self, port=12345):
