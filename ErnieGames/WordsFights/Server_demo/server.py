@@ -8,8 +8,8 @@ class Server:
     def __init__(self, port=12345):
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.host = socket.gethostname() # 获取本地主机名
-        self.ip_address = socket.gethostbyname(self.host) # 获取主机名对应的IP地址
+        self.host = socket.gethostname()  # 获取本地主机名
+        self.ip_address = socket.gethostbyname(self.host)  # 获取主机名对应的IP地址
         self.connections = []
         self.lock = threading.Lock()
         self.message_queue = queue.Queue()  # 添加消息队列
@@ -65,6 +65,7 @@ class Server:
     def close(self):
         self.server_socket.close()
         print("Server stopped.")
+
 
 # 启动服务器
 

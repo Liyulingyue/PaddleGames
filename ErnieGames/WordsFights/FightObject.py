@@ -1,6 +1,7 @@
 import json
 import math
 
+
 class FightObject(object):
     def __init__(self):
         super().__init__()
@@ -18,14 +19,14 @@ class FightObject(object):
             for role in ["Soldier", "Rider", "Archer"]:
                 data[user][role] = {}
                 data[user][role]["hp"] = 100
-                data[user][role]["x"] = 0.1 if user=="User1" else 0.9
-                data[user][role]["y"] = 0.3 if role=="Soldier" else 0.5 if role=="Rider" else 0.7
+                data[user][role]["x"] = 0.1 if user == "User1" else 0.9
+                data[user][role]["y"] = 0.3 if role == "Soldier" else 0.5 if role == "Rider" else 0.7
                 data[user][role]["target_x"] = data[user][role]["x"]
                 data[user][role]["target_y"] = data[user][role]["y"]
-                data[user][role]["prompt"] = "" # 空意味着无阵法
+                data[user][role]["prompt"] = ""  # 空意味着无阵法
                 data[user][role]["ATK"] = 2
                 data[user][role]["DEF"] = 1
-                data[user][role]["element"] = "" # 无阵法时无属性
+                data[user][role]["element"] = ""  # 无阵法时无属性
         return data
 
     def update(self):
@@ -37,11 +38,11 @@ class FightObject(object):
                 target_x = self.data[user][role]["target_x"]
                 target_y = self.data[user][role]["target_y"]
                 hp = self.data[user][role]["hp"]
-                if (hp<=0) or (x==target_x and y==target_y):
-                    continue # pass role with no hp or already in target position
+                if (hp <= 0) or (x == target_x and y == target_y):
+                    continue  # pass role with no hp or already in target position
                 else:
                     speed = self._get_speed_of_role(role)
-                    new_x, new_y = self._move_2d(x,y,target_x,target_y,speed)
+                    new_x, new_y = self._move_2d(x, y, target_x, target_y, speed)
                     self.data[user][role]["x"] = new_x
                     self.data[user][role]["y"] = new_y
 
@@ -52,7 +53,7 @@ class FightObject(object):
     def _update_hp(self, base_user, another_user):
         for role in self.data[base_user]:
             nearest_role = ""
-            nearest_distance = 2 # the max distance is sqrt(2)
+            nearest_distance = 2  # the max distance is sqrt(2)
             x = self.data[base_user][role]["x"]
             y = self.data[base_user][role]["y"]
             target_x = self.data[base_user][role]["target_x"]
@@ -73,7 +74,7 @@ class FightObject(object):
                 if ranger < distance:
                     continue
                 else:
-                    if distance<nearest_distance:
+                    if distance < nearest_distance:
                         nearest_distance = distance
                         nearest_role = role_
             if nearest_role in ["Soldier", "Rider", "Archer"]:
@@ -81,7 +82,7 @@ class FightObject(object):
                 DEF_ = self.data[another_user][nearest_role]["DEF"]
                 element = self.data[base_user][role]["element"]
                 element_ = self.data[another_user][role]["element"]
-                damage = max(0, ATK-DEF_)
+                damage = max(0, ATK - DEF_)
                 hp_ = self.data[another_user][nearest_role]["hp"]
                 hp_ = hp_ - damage
                 # TODO: 增加更多的伤害交互
@@ -163,6 +164,7 @@ class FightObject(object):
         data = FightObject._init_data()
         dispatched_dict = FightObject._data2dispatched_dict(data)
         return dispatched_dict
+
 
 if __name__ == "__main__":
     fightobj = FightObject()
