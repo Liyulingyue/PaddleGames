@@ -59,7 +59,12 @@ class Server:
 
     def listen_for_messages(self, conn, addr):
         while True:
-            data = conn.recv(1024)
+            try:
+                data = conn.recv(1024)
+            except:
+                conn.close()
+                self.connections.remove((conn, addr))
+                break
             if data:
                 print(f"Received from {addr}: {data.decode()}")
                 if data.decode() == "quit":
@@ -85,7 +90,11 @@ class Server:
                 with self.lock:
                     for c, addr in self.connections:
                         # if c != conn:  # 避免将消息发回给发送者自己
-                        c.sendall(data.encode())
+                        try:
+                            c.sendall(data.encode())
+                        except:
+                            c.close()
+                            self.connections.remove((c, addr))
                 # print(f"Broadcasted message: {data}")
             else:
                 time.sleep(0.1)  # 稍作休眠，避免忙等待
