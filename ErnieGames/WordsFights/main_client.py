@@ -10,7 +10,7 @@ from server_and_client.client import Client
 import json
 import copy
 
-
+# TODO: 增加等待标识符，即同一时间，只有一个prompt请求
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
