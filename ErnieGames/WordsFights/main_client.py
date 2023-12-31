@@ -8,6 +8,7 @@ from utils import *
 import cv2
 from server_and_client.client import Client
 import json
+import copy
 
 
 class MyWindow(QWidget):
@@ -86,7 +87,9 @@ class MyWindow(QWidget):
         if event.button() == Qt.LeftButton:
             for key in ["Soldier", "Rider", "Archer"]:
                 flag = 0
-                hp, x_percent, y_percent, _, _, _ = self.game_dict[self.user][key]
+                hp = self.game_dict[self.user][key]["hp"]
+                x_percent = self.game_dict[self.user][key]["x"]
+                y_percent = self.game_dict[self.user][key]["y"]
                 if hp <= 0: continue
                 _, _x, _y, _w, _h = self.layout_dict[f"{self.user}_Img_{key}"]
                 if _x - _w * self.height / self.width / 2 < x < _x + _w * self.height / self.width / 2 and _y - _h / 2 < y < _y + _h / 2:
@@ -136,18 +139,16 @@ class MyWindow(QWidget):
 
     def draw_frame(self):
         img = get_img_and_resize(self.layout_dict, "_Img_Main")
-        for key in self.game_dict["User1"]:
-            hp, x_percent, y_percent, _, _, prompt = self.game_dict["User1"][key]
-            self.elements[f"User1_Text_{key}"].setText(f"血量: {str(hp)}\n阵法: {prompt}")
-            if hp <= 0: continue
-            part_img = get_img_and_resize(self.layout_dict, f"User1_Img_{key}")
-            img = paste_image(img, part_img, [x_percent, y_percent])
-        for key in self.game_dict["User2"]:
-            hp, x_percent, y_percent, _, _, prompt = self.game_dict["User2"][key]
-            self.elements[f"User2_Text_{key}"].setText(f"血量: {str(hp)}\n阵法: {prompt}")
-            if hp <= 0: continue
-            part_img = get_img_and_resize(self.layout_dict, f"User2_Img_{key}")
-            img = paste_image(img, part_img, [x_percent, y_percent])
+        for user in ["User1", "User2"]:
+            for key in self.game_dict[user]:
+                hp = self.game_dict[self.user][key]["hp"]
+                x_percent = self.game_dict[self.user][key]["x"]
+                y_percent = self.game_dict[self.user][key]["y"]
+                prompt = self.game_dict[self.user][key]["prompt"]
+                self.elements[f"{user}_Text_{key}"].setText(f"血量: {str(hp)}\n阵法: {prompt}")
+                if hp <= 0: continue
+                part_img = get_img_and_resize(self.layout_dict, f"{user}_Img_{key}")
+                img = paste_image(img, part_img, [x_percent, y_percent])
         image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         height, width, channel = image.shape
         bytesPerLine = 3 * width

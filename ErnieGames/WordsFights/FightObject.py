@@ -1,6 +1,6 @@
 import json
 import math
-
+import copy
 
 class FightObject(object):
     def __init__(self):
@@ -107,6 +107,8 @@ class FightObject(object):
 
     @staticmethod
     def _data2dispatched_dict(data):
+        """
+        TODO: 从数据安全角度来说，不应该将整个信息传递回去，暂时为了方便直接传递整个数据
         dispatched_dict = {}
         for user in ["User1", "User2"]:
             dispatched_dict[user] = {}
@@ -117,6 +119,8 @@ class FightObject(object):
                                                data[user][role]["target_x"],
                                                data[user][role]["target_y"],
                                                data[user][role]["prompt"]]
+        """
+        dispatched_dict = copy.deepcopy(data)
         return dispatched_dict
 
     def _get_speed_of_role(self, role):
