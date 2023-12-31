@@ -3,7 +3,7 @@ import threading
 import queue
 import time
 from ErnieGames.WordsFights.llm.chat_llm import get_llm_answer
-from ..FightObject import FightObject
+from ErnieGames.WordsFights.FightObject import FightObject
 
 class Server:
     def __init__(self, port=12345):
