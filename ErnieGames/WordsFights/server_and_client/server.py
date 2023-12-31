@@ -2,7 +2,7 @@ import socket
 import threading
 import queue
 import time
-from ErnieGames.WordsFights.llm.chat_llm import get_llm_answer
+from ErnieGames.WordsFights.llm.chat_llm import analyse_word
 from ErnieGames.WordsFights.FightObject import FightObject
 
 class Server:
@@ -107,9 +107,11 @@ class Server:
                 _, user, role, prompt = ernie_str.split(",")
                 # answer = get_llm_answer(data.decode())
                 # TODO: 以多线程的方式执行LLM，即对于每个Prompt都开一个线程，互不干扰，可能需要考虑搞6个sdk支持并发
-                def prompt2feature(prompt):
-                    return 3, 1, "水", prompt
-                ATK, DEF, elem, prompt = prompt2feature(prompt)
+                # TODO: 增加方法，用于处理try-except的情况
+                json_dict = analyse_word(prompt)
+                ATK = json_dict['攻击力']
+                DEF = json_dict['防御力']
+                elem = json_dict["属性"]
                 self.ernied_queue.put((user,role,ATK,DEF,elem,prompt))
             else:
                 time.sleep(0.1)  # 稍作休眠，避免忙等待
