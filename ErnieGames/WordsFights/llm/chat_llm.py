@@ -2,7 +2,7 @@ import erniebot
 import json
 import datetime
 # 一个自定义文件用来存放token，请自行到自己账号主页复制自己的token替换erniebot
-from .tokens import erniebot_access_token
+from ErnieGames.WordsFights.llm.tokens import erniebot_access_token
 
 def get_llm_answer(prompt):
     erniebot.api_type = 'aistudio'
@@ -34,10 +34,20 @@ def analyse_word(word):
     "防御力":float, 
     "属性":str
     {str('}')}
-    其中，攻击力的取值是2到3，防御力的取值是0到1，属性的取值范围是"金","木","水","火","土"之一。
+    其中，攻击力的取值是1到3，防御力的取值是0到2，属性的取值范围是["金","木","水","火","土"]之一。
     """
     result = get_llm_answer(prompt)
     json_dict = extract_json_from_llm_answer(result)
+    # ATK = json_dict['攻击力']
+    # DEF = json_dict['防御力']
+    # element = json_dict["属性"]
+    return json_dict
+
+if __name__ == "__main__":
+    prompt = "万剑天来"
+    json_dict = analyse_word(prompt)
     ATK = json_dict['攻击力']
     DEF = json_dict['防御力']
     element = json_dict["属性"]
+    print(ATK, DEF, element)
+    # 2.5 1.5 金
