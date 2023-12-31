@@ -3,10 +3,10 @@ import sys
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from FightObject import fightobj
+from FightObject import FightObject
 from utils import *
 import cv2
-from .server_and_client.client import Client
+from server_and_client.client import Client
 import json
 
 class MyWindow(QWidget):
@@ -15,7 +15,7 @@ class MyWindow(QWidget):
         self.elements = {}
         self.width = 1600
         self.height = 900
-        self.gameobj = fightobj.get_default_dict()
+        self.gameobj = FightObject.get_default_dict()
         self.initUI()
         self.draw_frame()
         self.client = Client()
