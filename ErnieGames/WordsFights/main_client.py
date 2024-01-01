@@ -27,7 +27,7 @@ class MyWindow(QWidget):
         self.height = 900
         self.game_dict = FightObject.get_default_dict()
         self.user = "User1"
-        self.client = Client()
+        self.client = Client(host='192.168.2.173', port=12345)
         self.layout_dict = self.get_layout_configure()
 
     def initUI(self):
