@@ -11,6 +11,7 @@ import json
 import copy
 
 # TODO: 增加等待标识符，即同一时间，只有一个prompt请求
+# TODO: 增加回车发送
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
