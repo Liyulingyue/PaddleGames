@@ -112,6 +112,7 @@ class Server:
                 ATK = json_dict['攻击力']
                 DEF = json_dict['防御力']
                 elem = json_dict["属性"]
+                print(f"prompt:{prompt}, ATK:{ATK}, DEF:{DEF}, element:{elem}")
                 self.ernied_queue.put((user,role,ATK,DEF,elem,prompt))
             else:
                 time.sleep(0.1)  # 稍作休眠，避免忙等待
