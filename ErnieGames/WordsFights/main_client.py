@@ -141,10 +141,10 @@ class MyWindow(QWidget):
         img = get_img_and_resize(self.layout_dict, "_Img_Main")
         for user in ["User1", "User2"]:
             for key in self.game_dict[user]:
-                hp = self.game_dict[self.user][key]["hp"]
-                x_percent = self.game_dict[self.user][key]["x"]
-                y_percent = self.game_dict[self.user][key]["y"]
-                prompt = self.game_dict[self.user][key]["prompt"]
+                hp = self.game_dict[user][key]["hp"]
+                x_percent = self.game_dict[user][key]["x"]
+                y_percent = self.game_dict[user][key]["y"]
+                prompt = self.game_dict[user][key]["prompt"]
                 self.elements[f"{user}_Text_{key}"].setText(f"血量: {str(hp)}\n阵法: {prompt}")
                 if hp <= 0: continue
                 part_img = get_img_and_resize(self.layout_dict, f"{user}_Img_{key}")
