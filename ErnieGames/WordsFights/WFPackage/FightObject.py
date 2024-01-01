@@ -2,6 +2,7 @@ import json
 import math
 import copy
 
+# TODO: 死亡玩家不需要进行prompt检验
 class FightObject(object):
     def __init__(self):
         super().__init__()
@@ -83,6 +84,12 @@ class FightObject(object):
                 element = self.data[base_user][role]["element"]
                 element_ = self.data[another_user][role]["element"]
                 damage = max(0, ATK - DEF_)
+                if (element=="金" and element_=="木") or \
+                    (element == "木" and element_ == "土") or \
+                    (element == "土" and element_ == "水") or \
+                    (element == "水" and element_ == "火") or \
+                    (element == "火" and element_ == "金"):
+                    damage = damage * 2
                 hp_ = self.data[another_user][nearest_role]["hp"]
                 hp_ = hp_ - damage
                 # TODO: 增加更多的伤害交互
