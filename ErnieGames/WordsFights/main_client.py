@@ -3,10 +3,10 @@ import sys
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from FightObject import FightObject
-from utils import *
+from WFPackage.FightObject import FightObject
+from WFPackage.utils import *
 import cv2
-from server_and_client.client import Client
+from WFPackage.server_and_client.client import Client
 import json
 import copy
 
