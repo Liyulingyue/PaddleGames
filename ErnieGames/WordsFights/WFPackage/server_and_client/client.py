@@ -30,6 +30,8 @@ class Client(object):
 
     def receive_messages(self):
         while True:
+            # TODO: 后续float统一保留四位小数，并且将4096更改为2048
+            # TODO: 后续只传递部分信息回来
             received_data = self.client_socket.recv(4096)
             if received_data:
                 # print('Received:', received_data.decode())
