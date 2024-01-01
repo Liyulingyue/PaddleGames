@@ -30,7 +30,7 @@ class Client(object):
 
     def receive_messages(self):
         while True:
-            received_data = self.client_socket.recv(2048)
+            received_data = self.client_socket.recv(4096)
             if received_data:
                 # print('Received:', received_data.decode())
                 self.received_str = received_data.decode()
