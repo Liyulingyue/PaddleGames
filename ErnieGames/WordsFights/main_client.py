@@ -70,6 +70,7 @@ class MyWindow(QWidget):
         # 设置窗口的位置和大小
         self.setGeometry(0, 0, self.width, self.height)
         self.setWindowTitle('Words Fight')
+
         self.show()
 
     def initClock(self):
