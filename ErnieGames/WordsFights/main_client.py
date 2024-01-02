@@ -11,6 +11,7 @@ import json
 import copy
 
 # TODO: 增加等待标识符，即同一时间，只有一个prompt请求
+# TODO: 增加回车发送
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -27,7 +28,7 @@ class MyWindow(QWidget):
         self.height = 900
         self.game_dict = FightObject.get_default_dict()
         self.user = "User1"
-        self.client = Client(host='192.168.2.173', port=12345)
+        self.client = Client(host='47.113.229.180', port=12345)
         self.layout_dict = self.get_layout_configure()
 
     def initUI(self):
@@ -135,8 +136,11 @@ class MyWindow(QWidget):
     def update_frame(self):
         raw_str = self.client.get_received_str()
         if raw_str != "":
-            self.game_dict = json.loads(raw_str)
-            self.draw_frame()
+            try:
+                self.game_dict = json.loads(raw_str)
+                self.draw_frame()
+            except:
+                print(raw_str)
 
     def draw_frame(self):
         img = get_img_and_resize(self.layout_dict, "_Img_Main")

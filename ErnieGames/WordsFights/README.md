@@ -11,3 +11,10 @@ ErnieBot是一个经过封装的Python工具包，你可以通过这个工具包
 
 ## 使用方法
 1. 前往 https://aistudio.baidu.com/index 获取你的erniebot token，替换到源文件中
+
+## 更新计划
+1. 平衡游戏伤害数值，避免游戏节奏太快
+2. 服务器帧率增加，本地帧率也增加一下
+3. 修复bug：不攻击移动目标
+4. socket需要关
+5. 加一个设置页面
