@@ -1,4 +1,5 @@
 import cv2
+import json
 
 
 def get_img_and_resize(config_dict, key, width=1600, height=900):
@@ -32,3 +33,22 @@ def paste_image(img1, img2, position_percent):
         img1[y_offset:y_offset + paste_height, x_offset:x_offset + paste_width] = \
             img2[src_y:src_y + paste_height, src_x:src_x + paste_width]
     return img1
+
+
+class FloatPrecisionEncoder(json.JSONEncoder):
+    def __init__(self, *, precision: int):
+        super().__init__()
+        self.precision = precision
+
+    def encode(self, o):
+        return super().encode(self._format_floats(o))
+
+    def _format_floats(self, o):
+        if isinstance(o, float):
+            return round(o, self.precision)
+        elif isinstance(o, dict):
+            return {k: self._format_floats(v) for k, v in o.items()}
+        elif isinstance(o, (list, tuple)):
+            return [self._format_floats(x) for x in o]
+        else:
+            return o
