@@ -34,21 +34,20 @@ def paste_image(img1, img2, position_percent):
             img2[src_y:src_y + paste_height, src_x:src_x + paste_width]
     return img1
 
-
-class FloatPrecisionEncoder(json.JSONEncoder):
-    def __init__(self, *, precision: int):
-        super().__init__()
-        self.precision = precision
-
-    def encode(self, o):
-        return super().encode(self._format_floats(o))
-
-    def _format_floats(self, o):
-        if isinstance(o, float):
-            return round(o, self.precision)
-        elif isinstance(o, dict):
-            return {k: self._format_floats(v) for k, v in o.items()}
-        elif isinstance(o, (list, tuple)):
-            return [self._format_floats(x) for x in o]
+def round_floats_in_dict(d, precision=3):
+    """
+    递归地遍历字典中的所有浮点数值，并将它们设置为指定的小数位数。
+    """
+    rounded_dict = {}
+    for key, value in d.items():
+        if isinstance(value, dict):
+            # 如果值是另一个字典，递归调用此函数
+            rounded_value = round_floats_in_dict(value, precision)
+        elif isinstance(value, float):
+            # 如果值是浮点数，设置其精度
+            rounded_value = round(value, precision)
         else:
-            return o
+            # 对于非浮点数和非字典的值，保持不变
+            rounded_value = value
+        rounded_dict[key] = rounded_value  # 将处理后的值添加到新字典中
+    return rounded_dict

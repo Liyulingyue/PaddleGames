@@ -1,7 +1,7 @@
 import json
 import math
 import copy
-from .utils import FloatPrecisionEncoder
+from .utils import round_floats_in_dict
 
 # TODO: 死亡玩家不需要进行prompt检验
 class FightObject(object):
@@ -120,7 +120,8 @@ class FightObject(object):
 
     def get_dispatched_str(self):
         dispatched_dict = FightObject._data2dispatched_dict(self.data)
-        dispatched_str = json.dumps(dispatched_dict, cls=FloatPrecisionEncoder, precision=4) # 保留4位小数
+        dispatched_dict = round_floats_in_dict(dispatched_dict, 4)
+        dispatched_str = json.dumps(dispatched_dict)
         return dispatched_str
 
     @staticmethod
