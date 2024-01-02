@@ -28,7 +28,8 @@ class MyWindow(QWidget):
         self.height = 900
         self.game_dict = FightObject.get_default_dict()
         self.user = "User1"
-        self.client = Client(host='47.113.229.180', port=12345)
+        # self.client = Client(host='47.113.229.180', port=12345)
+        self.client = Client(host='192.168.2.173', port=12345)
         self.layout_dict = self.get_layout_configure()
 
     def initUI(self):
@@ -126,7 +127,7 @@ class MyWindow(QWidget):
             if _x - _w * self.height / self.width / 2 < x < _x + _w * self.height / self.width / 2 and _y - _h / 2 < y < _y + _h / 2:
                 key = self.elements[f"{self.user}_Text_Choosed"].text()
                 if key in ["Soldier", "Rider", "Archer"]:
-                    self.client.set_send_str(f"MOVE,{self.user},{key},{str(new_x_p)},{str(new_y_p)}")
+                    self.client.set_send_str(f"MOVE,{self.user},{key},{new_x_p:.4f},{new_y_p:.4f}")
                     # self.game_dict["User1"][key][1] = new_x_p
                     # self.game_dict["User1"][key][2] = new_y_p
                     # self.draw_frame()
