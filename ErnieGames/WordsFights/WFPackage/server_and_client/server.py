@@ -6,7 +6,7 @@ from ..llm.chat_llm import analyse_word
 from ..FightObject import FightObject
 
 class Server:
-    def __init__(self, port=12345):
+    def __init__(self, port=12345, time_step=0.1, damage_coefficient=0.5):
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = socket.gethostname() # 获取本地主机名
@@ -17,7 +17,8 @@ class Server:
         self.move_queue = queue.Queue() # 移动请求消息队列
         self.ernie_queue = queue.Queue() # prompt消息队列
         self.ernied_queue = queue.Queue() # 处理好的prompt消息队列
-        self.fight_obj = FightObject()
+        self.fight_obj = FightObject(time_step=time_step, damage_coefficient=damage_coefficient)
+        self.time_step = time_step # 每次运行update时，间隔的时间
 
     def start(self):
         self.server_socket.bind((self.ip_address, self.port))
@@ -46,7 +47,7 @@ class Server:
                 self.fight_obj.set_prompt_info(user, role, ATK=ATK, DEF=DEF, element=elem, prompt=prompt)
             self.fight_obj.update()  # 调用fight_obj的update方法
             self.message_queue.put(self.fight_obj.get_dispatched_str())
-            time.sleep(0.1)  # 等待0.1秒
+            time.sleep(self.time_step)  # 等待0.1秒
 
     def listen_for_connections(self):
         while True:

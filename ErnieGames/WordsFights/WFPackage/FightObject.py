@@ -4,9 +4,11 @@ import copy
 
 # TODO: 死亡玩家不需要进行prompt检验
 class FightObject(object):
-    def __init__(self):
+    def __init__(self, time_step=0.1, damage_coefficient=0.5):
         super().__init__()
         self.data = self.init_data()
+        self.time_step = time_step # 每次运行update时，间隔的时间
+        self.damage_coefficient = damage_coefficient # 每一点面板伤害值，一秒内造成的伤害为0.5
 
     def init_data(self):
         data = FightObject._init_data()
@@ -32,6 +34,15 @@ class FightObject(object):
 
     def update(self):
         # 所有士兵向目的地移动（增加移动速度的配置信息）
+        self._update_position()
+
+        # 所有士兵检索最近一个地方单位，进行攻击，扣除相应单位血量，需要按照属性计算克制关系
+        self._update_hp("User1", "User2")
+        self._update_hp("User2", "User1")
+
+    def _update_position(self):
+        # 所有士兵向目的地移动（增加移动速度的配置信息）
+        # TODO: 增加碰撞信息，避免所有个体拥挤在一起
         for user in self.data:
             for role in self.data[user]:
                 x = self.data[user][role]["x"]
@@ -42,14 +53,11 @@ class FightObject(object):
                 if (hp <= 0) or (x == target_x and y == target_y):
                     continue  # pass role with no hp or already in target position
                 else:
-                    speed = self._get_speed_of_role(role)
-                    new_x, new_y = self._move_2d(x, y, target_x, target_y, speed)
+                    speed_per_second = self._get_speed_of_role(role)
+                    max_move_distance = speed_per_second * self.time_step
+                    new_x, new_y = self._move_2d(x, y, target_x, target_y, max_move_distance)
                     self.data[user][role]["x"] = new_x
                     self.data[user][role]["y"] = new_y
-
-        # 所有士兵检索最近一个地方单位，进行攻击，扣除相应单位血量，需要按照属性计算克制关系
-        self._update_hp("User1", "User2")
-        self._update_hp("User2", "User1")
 
     def _update_hp(self, base_user, another_user):
         for role in self.data[base_user]:
@@ -61,16 +69,17 @@ class FightObject(object):
             target_y = self.data[base_user][role]["target_y"]
             hp = self.data[base_user][role]["hp"]
             ranger = self._get_ranger_of_role(role)
-            if (hp <= 0) or (x != target_x or y != target_y):
-                continue  # pass role with no hp or in moving
+            # if (hp <= 0) or (x != target_x or y != target_y):
+            if (hp <= 0):
+                continue  # pass role with no hp (后续可能考虑运动不能攻击)
             for role_ in self.data[another_user]:
                 x_ = self.data[another_user][role_]["x"]
                 y_ = self.data[another_user][role_]["y"]
                 target_x_ = self.data[another_user][role_]["target_x"]
                 target_y_ = self.data[another_user][role_]["target_y"]
                 hp_ = self.data[another_user][role_]["hp"]
-                if (hp_ <= 0) or (x_ != target_x_ and y_ != target_y_):
-                    continue  # pass role with no hp or in moving
+                if (hp_ <= 0):
+                    continue  # pass role with no hp
                 distance = math.sqrt((x - x_) ** 2 + (y - y_) ** 2)
                 if ranger < distance:
                     continue
@@ -90,8 +99,9 @@ class FightObject(object):
                     (element == "水" and element_ == "火") or \
                     (element == "火" and element_ == "金"):
                     damage = damage * 2
+                real_damage = damage * self.damage_coefficient * self.time_step
                 hp_ = self.data[another_user][nearest_role]["hp"]
-                hp_ = hp_ - damage
+                hp_ = hp_ - real_damage
                 # TODO: 增加更多的伤害交互
                 self.data[another_user][nearest_role]["hp"] = hp_
 
@@ -132,13 +142,13 @@ class FightObject(object):
 
     def _get_speed_of_role(self, role):
         if role == "Soldier":
-            speed = 0.01
+            speed = 1/60
         elif role == "Archer":
-            speed = 0.01
+            speed = 1/60
         elif role == "Rider":
-            speed = 0.015
+            speed = 1/60*1.5
         else:
-            speed = 0.01
+            speed = 1/60
         return speed
 
     def _get_ranger_of_role(self, role):
@@ -152,12 +162,12 @@ class FightObject(object):
             ranger = 0.15
         return ranger
 
-    def _move_2d(self, x, y, target_x, target_y, speed):
+    def _move_2d(self, x, y, target_x, target_y, move_distance):
         # 计算当前位置到目标位置的距离
         distance = math.sqrt((target_x - x) ** 2 + (target_y - y) ** 2)
 
         # 如果距离小于或等于速度，则直接到达目标位置
-        if distance <= speed:
+        if distance <= move_distance:
             new_x, new_y = target_x, target_y
         else:
             # 计算移动的方向向量
@@ -166,8 +176,8 @@ class FightObject(object):
             # 归一化方向向量
             direction = [dx / distance, dy / distance]
             # 根据速度计算新的位置
-            new_x = x + direction[0] * speed
-            new_y = y + direction[1] * speed
+            new_x = x + direction[0] * move_distance
+            new_y = y + direction[1] * move_distance
         return new_x, new_y
 
     @staticmethod
