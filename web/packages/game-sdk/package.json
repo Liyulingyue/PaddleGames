@@ -1,0 +1,13 @@
+{
+  "name": "@deepgames/game-sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
