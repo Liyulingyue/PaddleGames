@@ -8,14 +8,73 @@ interface SnakeSegment {
   y: number
 }
 
+interface WSMessage {
+  msg_type: string
+  game_id?: string
+  player_id?: string
+  payload: unknown
+}
+
 export default function Game() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [connected] = useState(false)
+  const wsRef = useRef<WebSocket | null>(null)
+  const [connected, setConnected] = useState(false)
   const [snake, setSnake] = useState<SnakeSegment[]>([{ x: 10, y: 10 }])
   const [food, setFood] = useState<SnakeSegment>({ x: 15, y: 15 })
   const [direction, setDirection] = useState<SnakeSegment>({ x: 1, y: 0 })
   const [gameOver, setGameOver] = useState(false)
   const [score, setScore] = useState(0)
+  const [playerName, setPlayerName] = useState('')
+  const [roomId, setRoomId] = useState<string | null>(null)
+  const joinedRef = useRef(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const name = params.get('player') || sessionStorage.getItem('playerName') || 'Player1'
+    setPlayerName(name)
+
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      return
+    }
+
+    const ws = new WebSocket('ws://localhost:7080/ws')
+    wsRef.current = ws
+
+    ws.onopen = () => {
+      setConnected(true)
+      if (!joinedRef.current) {
+        ws.send(JSON.stringify({
+          msg_type: 'join_game',
+          payload: { game_type: 'paddle-snacks', player_name: name }
+        }))
+        joinedRef.current = true
+      }
+    }
+
+    ws.onmessage = (event) => {
+      try {
+        const msg: WSMessage = JSON.parse(event.data)
+        if (msg.msg_type === 'match_found') {
+          const payload = msg.payload as { room_id: string; player_id: string }
+          setRoomId(payload.room_id)
+        }
+      } catch {
+        console.error('Failed to parse message')
+      }
+    }
+
+    ws.onclose = () => {
+      setConnected(false)
+      joinedRef.current = false
+    }
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close()
+        wsRef.current = null
+      }
+    }
+  }, [])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (gameOver) return
@@ -132,37 +191,51 @@ export default function Game() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4">
-      <h1 className="text-3xl font-bold text-white mb-4">Paddle Snacks</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col items-center justify-center p-4">
+      <div className="mb-4 flex items-center gap-6">
+        <h1 className="text-3xl font-bold text-white">🐍 Paddle Snacks</h1>
+        <span className="text-white text-xl">Score: {score}</span>
+        {roomId && <span className="text-primary-400 text-sm">房间: {roomId.slice(0, 8)}</span>}
+      </div>
 
       <div className="mb-4 flex items-center gap-4">
-        <span className="text-white">Score: {score}</span>
-        {gameOver && <span className="text-red-500 font-bold">Game Over!</span>}
-        <span className={`px-2 py-1 rounded text-sm ${connected ? 'bg-green-600' : 'bg-red-600'} text-white`}>
-          {connected ? 'Connected' : 'Local Mode'}
+        <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
+          connected 
+            ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+            : 'bg-red-500/20 text-red-400 border border-red-500/30'
+        }`}>
+          {connected ? '🟢 已连接' : '🔴 未连接'}
         </span>
+        {gameOver && <span className="text-red-400 font-bold text-lg">Game Over!</span>}
       </div>
 
       <canvas
         ref={canvasRef}
         width={GRID_SIZE * CELL_SIZE}
         height={GRID_SIZE * CELL_SIZE}
-        className="border-2 border-gray-700 rounded"
+        className="border-2 border-slate-600 rounded-lg shadow-lg"
       />
 
-      <div className="mt-4 text-gray-400 text-sm">
-        <p>Use Arrow Keys to control the snake</p>
-        <p className="mt-2">Tip: Connect to server for multiplayer mode</p>
+      <div className="mt-6 text-slate-400 text-sm text-center">
+        <p className="text-lg mb-2">使用 ↑ ↓ ← → 方向键控制贪吃蛇</p>
+        <p className="text-slate-500">提示: 连接服务器即可与其他玩家对战</p>
       </div>
 
       {gameOver && (
         <button
           onClick={handleRestart}
-          className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          className="mt-6 px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-green-500/30"
         >
-          Restart
+          重新开始
         </button>
       )}
+
+      <a 
+        href="/" 
+        className="mt-4 px-6 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition-colors text-sm"
+      >
+        ← 返回大厅
+      </a>
     </div>
   )
 }

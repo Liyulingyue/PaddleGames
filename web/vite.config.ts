@@ -21,13 +21,12 @@ export default defineConfig({
         ws: true,
       },
     },
-  },
-  build: {
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        portal: resolve(__dirname, 'apps/portal/index.html'),
-      },
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     },
   },
+  optimizeDeps: {
+    exclude: ['@mediapipe/tasks-vision']
+  }
 })
