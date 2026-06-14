@@ -39,6 +39,17 @@ const games: Game[] = [
     features: ['360度方向控制', '流畅转向', '极限操作']
   },
   { 
+    id: 'pose-match', 
+    name: 'Pose Match', 
+    players: '1', 
+    description: '摆出指定姿势，匹配即得分',
+    icon: '🎯',
+    gradient: 'from-yellow-400 to-orange-500',
+    path: '/games/pose-match',
+    instructions: ['屏幕显示目标姿势', '玩家摆出相同姿势', '匹配度达到80%即可得分', '30秒内尽量多得分数'],
+    features: ['姿势识别', '反应训练', '体能挑战']
+  },
+  { 
     id: 'pose-cars', 
     name: 'Pose Cars', 
     players: '1-2', 

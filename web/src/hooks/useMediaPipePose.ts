@@ -27,7 +27,8 @@ declare global {
 export function useMediaPipePose(
   videoRef: React.RefObject<HTMLVideoElement | null>,
   onDirectionChange?: (direction: Direction) => void,
-  enabled?: boolean
+  enabled?: boolean,
+  onPoseResult?: (hasPerson: boolean, landmarks: any[] | null) => void
 ) {
   const [poseResult, setPoseResult] = useState<PoseResult>({ 
     direction: 'idle', 
@@ -87,6 +88,7 @@ export function useMediaPipePose(
         if (!results.poseLandmarks) {
           setPoseResult(prev => ({ ...prev, hasPerson: false, direction: 'idle' }))
           onDirectionChange?.('idle')
+          onPoseResult?.(false, null)
           lastArmStateRef.current = 'idle'
           lastLandmarksRef.current = null
           return
@@ -182,6 +184,7 @@ export function useMediaPipePose(
         })
 
         onDirectionChange?.(direction)
+        onPoseResult?.(true, landmarks)
         lastLandmarksRef.current = landmarks
 
       })

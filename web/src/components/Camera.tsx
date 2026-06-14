@@ -9,6 +9,7 @@ interface CameraProps {
   height?: number
   mirrored?: boolean
   displayMode?: 'original' | 'drawing' | 'overlay'
+  onPoseResult?: (hasPerson: boolean, landmarks: any[] | null) => void
 }
 
 export default function Camera({ 
@@ -17,7 +18,8 @@ export default function Camera({
   width = 320, 
   height = 240,
   mirrored = true,
-  displayMode = 'overlay'
+  displayMode = 'overlay',
+  onPoseResult
 }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
@@ -27,7 +29,8 @@ export default function Camera({
   const { poseResult, isDetecting, hasPerson, error, canvasRef } = useMediaPipePose(
     videoRef,
     onDirectionChange,
-    enabled
+    enabled,
+    onPoseResult
   )
 
   useEffect(() => {

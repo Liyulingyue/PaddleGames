@@ -3,10 +3,10 @@ import { Header, Layout, Camera } from '../../components'
 import { useGameStore } from '../../store/gameStore'
 import { Direction } from '../../hooks/usePoseDetection'
 
-const CANVAS_WIDTH = 500
-const CANVAS_HEIGHT = 500
-const BLOCK_SIZE = 8
-const STEP_SIZE = 5
+const CANVAS_WIDTH = 800
+const CANVAS_HEIGHT = 800
+const BLOCK_SIZE = 12
+const STEP_SIZE = 8
 const GAME_SPEED = 60
 
 interface Point {
@@ -26,6 +26,9 @@ export default function PoseSnake2() {
   const [showInstructions, setShowInstructions] = useState(true)
   const [displayMode, setDisplayMode] = useState<'original' | 'drawing' | 'overlay'>('overlay')
   const [mirrored, setMirrored] = useState(true)
+  const [splitRatio, setSplitRatio] = useState(25)
+  const [isDragging, setIsDragging] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   
   const snakeRef = useRef<Point>({ x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 })
   const bodyRef = useRef<Point[]>([{ x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 }])
@@ -85,6 +88,22 @@ export default function PoseSnake2() {
     if (dir !== 'idle') {
       directionRef.current = directionToAngle(dir)
     }
+  }, [])
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const newRatio = ((e.clientX - rect.left) / rect.width) * 100
+    setSplitRatio(Math.max(15, Math.min(70, newRatio)))
+  }, [isDragging])
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
   }, [])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -224,132 +243,176 @@ export default function PoseSnake2() {
     }
   }, [gameLoop])
 
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp])
+
   return (
     <Layout>
       <Header title="🎮 PoseSnake 2" showBack />
       
-      <main className="p-8 max-w-6xl mx-auto">
-        <div className="flex flex-wrap gap-6 justify-center">
-          <div className="flex flex-col items-center">
-            <div className="mb-3 flex items-center gap-3 bg-slate-800/50 backdrop-blur rounded-full px-4 py-2">
-              <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
-                connected 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
-              }`}>
-                {connected ? '🟢 已连接' : '🔴 未连接'}
-              </span>
-              <span className="text-white text-lg font-bold">得分: {score}</span>
-            </div>
+      <main ref={containerRef} className="flex h-[calc(100vh-80px)] select-none">
+        <div style={{ width: `${splitRatio}%` }} className="flex-shrink-0 p-6 flex flex-col gap-5 overflow-y-auto h-full">
+          <div className="flex items-center justify-center bg-slate-800/50 rounded-xl px-4 py-4">
+            <span className="text-white text-2xl font-bold">得分: {score}</span>
+          </div>
 
-            <div className="flex gap-3 mb-4">
-              <button
-                onClick={() => setControlMode('pose')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  controlMode === 'pose' 
-                    ? 'bg-primary-600 text-white' 
-                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                }`}
-              >
-                📷 体感
-              </button>
-              <button
-                onClick={() => setControlMode('keyboard')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  controlMode === 'keyboard' 
-                    ? 'bg-primary-600 text-white' 
-                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                }`}
-              >
-                ⌨️ 键盘
-              </button>
-            </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setControlMode('pose')}
+              className={`flex-1 px-3 py-2 rounded-lg font-medium transition-colors ${
+                controlMode === 'pose' 
+                  ? 'bg-primary-600 text-white' 
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              📷 体感
+            </button>
+            <button
+              onClick={() => setControlMode('keyboard')}
+              className={`flex-1 px-3 py-2 rounded-lg font-medium transition-colors ${
+                controlMode === 'keyboard' 
+                  ? 'bg-primary-600 text-white' 
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              ⌨️ 键盘
+            </button>
+          </div>
 
-            {controlMode === 'pose' ? (
-              <div className="flex flex-col items-center">
-                <Camera
-                  onDirectionChange={handlePoseDirection}
-                  enabled={true}
-                  width={320}
-                  height={240}
-                  mirrored={mirrored}
-                  displayMode={displayMode}
-                />
-                <div className="mt-3 flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-slate-400 text-xs">显示:</span>
-                    <div className="flex gap-1">
-                      {(['original', 'drawing', 'overlay'] as const).map(mode => (
-                        <button
-                          key={mode}
-                          onClick={() => setDisplayMode(mode)}
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            displayMode === mode
-                              ? 'bg-primary-600 text-white'
-                              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                          }`}
-                        >
-                          {mode === 'original' ? '原图' : mode === 'drawing' ? '绘制' : '叠加'}
-                        </button>
-                      ))}
-                    </div>
+          {controlMode === 'pose' ? (
+            <>
+              <Camera
+                onDirectionChange={handlePoseDirection}
+                enabled={true}
+                width={340}
+                height={255}
+                mirrored={mirrored}
+                displayMode={displayMode}
+              />
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-400 text-xs">显示:</span>
+                  <div className="flex gap-1">
+                    {(['original', 'drawing', 'overlay'] as const).map(mode => (
+                      <button
+                        key={mode}
+                        onClick={() => setDisplayMode(mode)}
+                        className={`px-2 py-1 rounded text-xs font-medium ${
+                          displayMode === mode
+                            ? 'bg-primary-600 text-white'
+                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                        }`}
+                      >
+                        {mode === 'original' ? '原图' : mode === 'drawing' ? '绘制' : '叠加'}
+                      </button>
+                    ))}
                   </div>
-                  <label className="flex items-center gap-1.5 text-slate-300 text-xs cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={mirrored}
-                      onChange={(e) => setMirrored(e.target.checked)}
-                      className="rounded"
-                    />
-                    镜像
-                  </label>
                 </div>
+                <label className="flex items-center gap-1.5 text-slate-300 text-xs cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={mirrored}
+                    onChange={(e) => setMirrored(e.target.checked)}
+                    className="rounded"
+                  />
+                  镜像
+                </label>
               </div>
-            ) : (
-              <div className="bg-slate-800/50 backdrop-blur rounded-2xl p-4 text-center" style={{ width: 320 }}>
-                <p className="text-slate-300 mb-2 text-sm">按 ← → 开始转向</p>
-                <div className="flex flex-col items-center gap-1 text-xs">
-                  <span className="px-3 py-1 bg-slate-700 rounded text-slate-300">← → 左右转向</span>
-                  <span className="px-3 py-1 bg-slate-700 rounded text-slate-300">A/D 键也可以</span>
-                </div>
+
+              <div className="bg-slate-800/50 rounded-xl p-4 space-y-2">
+                <p className="text-white text-sm">🎮 体感: 左手左转，右手右转</p>
+                <p className="text-white text-sm">⌨️ 键盘: ← → 转向</p>
+                <p className="text-white text-sm">🐍 吃到食物得分，穿墙得分</p>
               </div>
+            </>
+          ) : (
+            <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+              <p className="text-slate-300 mb-2 text-sm">按 ← → 开始转向</p>
+              <div className="flex flex-col items-center gap-1 text-xs">
+                <span className="px-3 py-1 bg-slate-700 rounded text-slate-300">← → 左右转向</span>
+                <span className="px-3 py-1 bg-slate-700 rounded text-slate-300">A/D 键也可以</span>
+              </div>
+            </div>
+          )}
+
+          {!gameStarted && !gameOver && showInstructions && (
+            <div className="text-center text-slate-400 text-sm">
+              <p className="mb-2">举起左手向左转</p>
+              <p>举起右手向右转</p>
+            </div>
+          )}
+
+          {gameOver && (
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-red-400 font-bold text-2xl">Game Over!</span>
+              <button
+                onClick={resetGame}
+                className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg"
+              >
+                重新开始
+              </button>
+            </div>
+          )}
+
+          <div className="flex gap-3 mt-auto">
+            {!gameStarted && !gameOver && (
+              <button
+                onClick={() => {
+                  gameStartedRef.current = true
+                  setGameStarted(true)
+                  setShowInstructions(false)
+                }}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-lg"
+              >
+                开始游戏
+              </button>
+            )}
+            {(gameStarted || gameOver) && (
+              <button
+                onClick={resetGame}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg"
+              >
+                重新开始
+              </button>
             )}
           </div>
+        </div>
 
-          <div className="flex flex-col items-center">
-            <canvas
-              ref={canvasRef}
-              width={CANVAS_WIDTH}
-              height={CANVAS_HEIGHT}
-              className="border-2 border-slate-600 rounded-lg shadow-lg"
-            />
+        <div
+          onMouseDown={handleMouseDown}
+          className="w-1 bg-gray-300 cursor-col-resize flex-shrink-0 hover:bg-primary-400 transition-colors"
+        />
 
-            {showInstructions && (
-              <div className="mt-4 text-center text-slate-400 max-w-md">
-                <p className="text-lg font-semibold text-white mb-2">🎮 PoseSnake 2</p>
-                <p className="text-sm">
-                  {controlMode === 'pose' 
-                    ? '💡 举起左手向左转，举起右手向右转' 
-                    : '💡 ← → 左右转向，蛇一直前进'}
-                </p>
-                <p className="text-xs text-slate-500 mt-2">
-                  蛇从屏幕另一侧穿出，吃到食物得分
-                </p>
-              </div>
-            )}
-
-            {gameOver && (
-              <div className="mt-4 flex flex-col items-center gap-3">
-                <span className="text-red-400 font-bold text-2xl">Game Over!</span>
-                <button
-                  onClick={resetGame}
-                  className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg"
-                >
-                  重新开始
-                </button>
-              </div>
-            )}
-          </div>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <canvas
+            ref={canvasRef}
+            width={800}
+            height={800}
+            className="border-2 border-slate-600 rounded-lg shadow-lg w-full h-full"
+            style={{ maxWidth: 'calc(100vh - 120px)', maxHeight: 'calc(100vh - 120px)' }}
+          />
+          
+          {showInstructions && (
+            <div className="mt-4 text-center text-slate-400 max-w-md">
+              <p className="text-lg font-semibold text-white mb-2">🎮 PoseSnake 2</p>
+              <p className="text-sm">
+                {controlMode === 'pose' 
+                  ? '💡 举起左手向左转，举起右手向右转' 
+                  : '💡 ← → 左右转向，蛇一直前进'}
+              </p>
+              <p className="text-xs text-slate-500 mt-2">
+                蛇从屏幕另一侧穿出，吃到食物得分
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </Layout>
