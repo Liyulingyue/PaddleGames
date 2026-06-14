@@ -20,10 +20,12 @@ export default function PoseSnake2() {
   
   const [score, setScore] = useState(0)
   const [playerName, setPlayerName] = useState('')
-  const [controlMode, setControlMode] = useState<'pose' | 'keyboard'>('keyboard')
+  const [controlMode, setControlMode] = useState<'pose' | 'keyboard'>('pose')
   const [gameStarted, setGameStarted] = useState(false)
   const [gameOver, setGameOver] = useState(false)
   const [showInstructions, setShowInstructions] = useState(true)
+  const [displayMode, setDisplayMode] = useState<'original' | 'drawing' | 'overlay'>('overlay')
+  const [mirrored, setMirrored] = useState(true)
   
   const snakeRef = useRef<Point>({ x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 })
   const bodyRef = useRef<Point[]>([{ x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 }])
@@ -264,12 +266,45 @@ export default function PoseSnake2() {
             </div>
 
             {controlMode === 'pose' ? (
-              <Camera
-                onDirectionChange={handlePoseDirection}
-                enabled={true}
-                width={320}
-                height={240}
-              />
+              <div className="flex flex-col items-center">
+                <Camera
+                  onDirectionChange={handlePoseDirection}
+                  enabled={true}
+                  width={320}
+                  height={240}
+                  mirrored={mirrored}
+                  displayMode={displayMode}
+                />
+                <div className="mt-3 flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-400 text-xs">显示:</span>
+                    <div className="flex gap-1">
+                      {(['original', 'drawing', 'overlay'] as const).map(mode => (
+                        <button
+                          key={mode}
+                          onClick={() => setDisplayMode(mode)}
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            displayMode === mode
+                              ? 'bg-primary-600 text-white'
+                              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                          }`}
+                        >
+                          {mode === 'original' ? '原图' : mode === 'drawing' ? '绘制' : '叠加'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-1.5 text-slate-300 text-xs cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={mirrored}
+                      onChange={(e) => setMirrored(e.target.checked)}
+                      className="rounded"
+                    />
+                    镜像
+                  </label>
+                </div>
+              </div>
             ) : (
               <div className="bg-slate-800/50 backdrop-blur rounded-2xl p-4 text-center" style={{ width: 320 }}>
                 <p className="text-slate-300 mb-2 text-sm">按 ← → 开始转向</p>

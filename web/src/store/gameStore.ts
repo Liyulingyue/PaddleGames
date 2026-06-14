@@ -14,6 +14,7 @@ interface GameStore {
   playerId: string | null
   ws: WebSocket | null
   latency: number | null
+  setPlayerName: (name: string) => void
   connect: (playerName: string) => void
   disconnect: () => void
   send: (msg: WSMessage) => void
@@ -21,11 +22,15 @@ interface GameStore {
 
 export const useGameStore = create<GameStore>((set, get) => ({
   connected: false,
-  playerName: '',
+  playerName: sessionStorage.getItem('playerName') || 'Player1',
   roomId: null,
   playerId: null,
   ws: null,
   latency: null,
+
+  setPlayerName: (name: string) => {
+    set({ playerName: name })
+  },
 
   connect: (playerName: string) => {
     const existingWs = get().ws

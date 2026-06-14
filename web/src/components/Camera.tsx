@@ -7,18 +7,21 @@ interface CameraProps {
   enabled?: boolean
   width?: number
   height?: number
+  mirrored?: boolean
+  displayMode?: 'original' | 'drawing' | 'overlay'
 }
 
 export default function Camera({ 
   onDirectionChange, 
   enabled = true, 
   width = 320, 
-  height = 240
+  height = 240,
+  mirrored = true,
+  displayMode = 'overlay'
 }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const [cameraError, setCameraError] = useState<string | null>(null)
-  const [mirrored, setMirrored] = useState(true)
   const [videoLoaded, setVideoLoaded] = useState(false)
 
   const { poseResult, isDetecting, hasPerson, error, canvasRef } = useMediaPipePose(
@@ -95,9 +98,9 @@ export default function Camera({
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative rounded-2xl overflow-hidden bg-black shadow-lg">
+      <div className="relative rounded-2xl overflow-hidden bg-black shadow-lg" style={{ width, height }}>
         {cameraError ? (
-          <div className="flex flex-col items-center justify-center bg-gray-800 text-white p-6 rounded-2xl" style={{ width, height }}>
+          <div className="flex flex-col items-center justify-center bg-gray-800 text-white p-6" style={{ width, height }}>
             <span className="text-4xl mb-3">📷</span>
             <p className="text-center text-sm">{cameraError}</p>
           </div>
@@ -108,11 +111,12 @@ export default function Camera({
               autoPlay
               playsInline
               muted
-              className="hidden"
+              className={`absolute ${displayMode !== 'drawing' ? '' : 'hidden'}`}
+              style={{ width, height, objectFit: 'cover', transform: mirrored ? 'scaleX(-1)' : 'none' }}
             />
             <canvas
               ref={canvasRef}
-              className={`${mirrored ? 'scale-x-[-1]' : ''}`}
+              className={`absolute ${displayMode !== 'original' ? '' : 'hidden'}`}
               style={{ width, height, objectFit: 'cover' }}
             />
             
@@ -161,15 +165,9 @@ export default function Camera({
             </div>
           </div>
           
-          <label className="flex items-center gap-2 text-white/80 text-xs cursor-pointer bg-black/30 px-3 py-2 rounded-lg">
-            <input
-              type="checkbox"
-              checked={mirrored}
-              onChange={(e) => setMirrored(e.target.checked)}
-              className="rounded"
-            />
-            镜像
-          </label>
+          <div className="flex items-center gap-2 text-white/80 text-xs bg-black/30 px-3 py-2 rounded-lg">
+            <span>{mirrored ? '已镜像' : '未镜像'}</span>
+          </div>
         </div>
       </div>
     </div>
