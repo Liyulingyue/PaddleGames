@@ -1,0 +1,83 @@
+/* Home 页面响应式样式 */
+@media (max-width: 768px) {
+  .home h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+  }
+
+  .home p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .home .start-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+  }
+
+  .home .floating-elements::before {
+    width: 60px;
+    height: 60px;
+    top: 15%;
+    left: 5%;
+  }
+
+  .home .floating-elements::after {
+    width: 40px;
+    height: 40px;
+    top: 75%;
+    right: 10%;
+  }
+
+  .home .background-shapes .shape:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    top: 25%;
+    left: 75%;
+  }
+
+  .home .background-shapes .shape:nth-child(2) {
+    width: 120px;
+    height: 120px;
+    top: 65%;
+    left: 10%;
+  }
+
+  .home .background-shapes .shape:nth-child(3) {
+    width: 60px;
+    height: 60px;
+    top: 85%;
+    right: 15%;
+  }
+}
+
+@media (max-width: 480px) {
+  .home h1 {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .home p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .home .start-button {
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
+  }
+
+  .home .floating-elements::before,
+  .home .floating-elements::after {
+    display: none;
+  }
+
+  .home .background-shapes .shape {
+    display: none;
+  }
+}

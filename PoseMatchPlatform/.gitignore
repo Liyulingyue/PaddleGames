@@ -1,0 +1,37 @@
+node_modules/
+dist/
+build/
+.venv/
+.env
+.env.local
+.env.production
+.env.development
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+*.db
+*.sqlite
+
+# 上传的视频和骨骼视频
+backend/app/data/videos/
+backend/data/videos/
+
+# 自签 HTTPS 证书
+cert.pem
+key.pem
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+reference/
+references/

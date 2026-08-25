@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 152.4 69% 41.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 187.7 85.7% 43.5%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 152.4 69% 41.2%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 152.4 69% 41.2%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 187.7 85.7% 43.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 152.4 69% 41.2%;
+  }
+}
+
+@layer components {
+  /* 语义徽章：来源/状态统一令牌，避免页面硬编码 */
+  .badge {
+    @apply px-1.5 py-0.5 rounded-full text-[10px] font-medium flex items-center gap-0.5 flex-shrink-0;
+  }
+  .badge-system { @apply bg-slate-500/20 text-slate-300; }
+  .badge-custom { @apply bg-emerald-500/20 text-emerald-400; }
+  .badge-local { @apply bg-amber-500/20 text-amber-400; }
+  .badge-published { @apply bg-cyan-500/20 text-cyan-400; }
+  .badge-cloud { @apply bg-emerald-400/20 text-emerald-300; }
+  .badge-destructive { @apply bg-red-500/20 text-red-400; }
+
+  /* 主操作按钮：统一 emerald→cyan 渐变 */
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center gap-2 font-medium;
+  }
+
+  /* 次级按钮：玻璃态 */
+  .btn-secondary {
+    @apply px-4 py-2.5 rounded-xl glass text-white/80 hover:text-white transition-all;
+  }
+}
+
+@layer base {
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    width: 100%;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* 跟练模式判定动画（劲舞团风） */
+@keyframes judgment-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -70%) scale(0.9);
+  }
+}
+
+@keyframes combo-bounce {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.3);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* 帮助弹窗 Tab 切换淡入 */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 指南弹窗翻页滑动：方向由 --slide-from 变量控制 */
+@keyframes guideSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--slide-from, 12px));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

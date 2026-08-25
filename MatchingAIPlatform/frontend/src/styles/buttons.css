@@ -1,0 +1,267 @@
+/* 统一按钮样式系统 */
+/* ================================================== */
+
+/* 基础按钮变量 */
+:root {
+  /* 主色调 - 统一的紫色渐变 */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-shadow: rgba(102, 126, 234, 0.3);
+  --primary-shadow-hover: rgba(102, 126, 234, 0.4);
+
+  /* 次要色调 - 粉色渐变 */
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --secondary-shadow: rgba(245, 87, 108, 0.3);
+  --secondary-shadow-hover: rgba(245, 87, 108, 0.4);
+
+  /* 强调色调 - 橙色渐变 */
+  --accent-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  --accent-shadow: rgba(255, 107, 53, 0.4);
+  --accent-shadow-hover: rgba(255, 107, 53, 0.6);
+
+  /* 按钮尺寸 */
+  --btn-padding-lg: 1.2rem 3rem;
+  --btn-padding-md: 1rem 2rem;
+  --btn-padding-sm: 0.8rem 1.5rem;
+  --btn-padding-xs: 0.6rem 1.2rem;
+
+  /* 按钮字体 */
+  --btn-font-size-lg: 1.3rem;
+  --btn-font-size-md: 1.1rem;
+  --btn-font-size-sm: 1rem;
+  --btn-font-size-xs: 0.9rem;
+
+  /* 按钮圆角 */
+  --btn-border-radius: 50px;
+  --btn-border-radius-sm: 25px;
+
+  /* 过渡动画 */
+  --btn-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 基础按钮类 */
+.btn {
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--btn-transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 按钮尺寸变体 */
+.btn--lg {
+  padding: var(--btn-padding-lg);
+  font-size: var(--btn-font-size-lg);
+  border-radius: var(--btn-border-radius);
+}
+
+.btn--md {
+  padding: var(--btn-padding-md);
+  font-size: var(--btn-font-size-md);
+  border-radius: var(--btn-border-radius);
+}
+
+.btn--sm {
+  padding: var(--btn-padding-sm);
+  font-size: var(--btn-font-size-sm);
+  border-radius: var(--btn-border-radius-sm);
+}
+
+.btn--xs {
+  padding: var(--btn-padding-xs);
+  font-size: var(--btn-font-size-xs);
+  border-radius: var(--btn-border-radius-sm);
+}
+
+/* 按钮颜色变体 */
+.btn--primary {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 8px 25px var(--primary-shadow);
+}
+
+.btn--primary:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px var(--primary-shadow-hover);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px var(--primary-shadow);
+}
+
+.btn--secondary {
+  background: var(--secondary-gradient);
+  color: white;
+  box-shadow: 0 6px 20px var(--secondary-shadow);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px var(--secondary-shadow-hover);
+}
+
+.btn--secondary:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--secondary-shadow);
+}
+
+.btn--accent {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 8px 25px var(--accent-shadow);
+}
+
+.btn--accent:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px var(--accent-shadow-hover);
+}
+
+.btn--accent:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px var(--accent-shadow);
+}
+
+/* 透明按钮变体 */
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn--ghost:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 脉冲动画变体 */
+.btn--pulse {
+  animation: buttonPulse 2s infinite;
+}
+
+@keyframes buttonPulse {
+  0%, 100% {
+    box-shadow: 0 8px 25px var(--primary-shadow);
+  }
+  50% {
+    box-shadow: 0 8px 25px var(--primary-shadow-hover);
+  }
+}
+
+/* 特殊用途按钮 */
+.btn--sidebar {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.btn--sidebar:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(6px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn--sidebar:active:not(:disabled) {
+  transform: translateX(6px) scale(0.98);
+}
+
+.btn--sidebar.active {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border-color: #3498db;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+  transform: translateX(8px);
+}
+
+.btn--sidebar.github-link {
+  background: linear-gradient(135deg, rgba(24, 23, 23, 0.8) 0%, rgba(33, 37, 41, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn--sidebar.github-link:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(33, 37, 41, 0.9) 0%, rgba(52, 58, 64, 0.9) 100%);
+  transform: translateX(6px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 悬浮按钮 */
+.btn--floating {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 8px 25px var(--accent-shadow);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-direction: column;
+  gap: 2px;
+}
+
+.btn--floating:hover:not(:disabled) {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 12px 35px var(--accent-shadow-hover);
+}
+
+.btn--floating:active:not(:disabled) {
+  transform: scale(0.95) rotate(5deg);
+  box-shadow: 0 4px 15px var(--accent-shadow);
+}
+
+.btn--floating.open {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+}
+
+.btn--floating.open:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  box-shadow: 0 12px 35px rgba(231, 76, 60, 0.6);
+}

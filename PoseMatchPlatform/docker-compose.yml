@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: posematch-frontend
+    restart: unless-stopped
+    ports:
+      - "16083:80"
+    depends_on:
+      - backend
+    networks:
+      - posematch-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: posematch-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=sqlite:///./data/posematch.db
+    volumes:
+      - posematch-data:/app/data
+    networks:
+      - posematch-network
+
+volumes:
+  posematch-data:
+
+networks:
+  posematch-network:
+    driver: bridge

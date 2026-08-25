@@ -1,0 +1,99 @@
+/* Home 页面按钮样式 - 使用统一按钮系统 */
+@import '../../buttons.css';
+
+/* 开始游戏按钮 - 主按钮样式 */
+.home .start-button {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: var(--btn-padding-lg);
+  font-size: var(--btn-font-size-lg);
+  font-weight: 600;
+  border-radius: var(--btn-border-radius);
+  cursor: pointer;
+  transition: var(--btn-transition);
+  box-shadow: 0 8px 25px var(--primary-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  animation: buttonPulse 2s infinite;
+}
+
+.home .start-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.home .start-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px var(--primary-shadow-hover);
+}
+
+.home .start-button:hover::before {
+  left: 100%;
+}
+
+.home .start-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px var(--primary-shadow);
+}
+
+/* 关于项目按钮 - 次要按钮样式 */
+.home .home-about-button {
+  background: var(--secondary-gradient);
+  color: white;
+  border: none;
+  padding: var(--btn-padding-md);
+  font-size: var(--btn-font-size-md);
+  font-weight: 600;
+  border-radius: var(--btn-border-radius);
+  cursor: pointer;
+  transition: var(--btn-transition);
+  box-shadow: 0 6px 20px var(--secondary-shadow);
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.home .home-about-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.home .home-about-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px var(--secondary-shadow-hover);
+}
+
+.home .home-about-button:hover::before {
+  left: 100%;
+}
+
+.home .home-about-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--secondary-shadow);
+}
+
+@keyframes buttonPulse {
+  0%, 100% {
+    box-shadow: 0 8px 25px var(--primary-shadow);
+  }
+  50% {
+    box-shadow: 0 8px 25px var(--primary-shadow-hover);
+  }
+}

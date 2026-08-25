@@ -1,0 +1,87 @@
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .theme-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .level-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .level-select-container {
+    padding: 1.5rem;
+  }
+
+  .level-select-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .level-select-header p {
+    font-size: 1.1rem;
+  }
+
+  .level-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .theme-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .level-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .theme-card {
+    padding: 1.5rem;
+  }
+
+  .level-card {
+    padding: 1.2rem;
+  }
+
+  .back-button {
+    position: static;
+    margin-top: 2rem;
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .level-select-header h1 {
+    font-size: 2rem;
+    letter-spacing: -1px;
+  }
+
+  .level-select-header p {
+    font-size: 1rem;
+  }
+
+  .theme-card {
+    padding: 1.2rem;
+  }
+
+  .level-card {
+    padding: 1rem;
+  }
+
+  .theme-title {
+    font-size: 1.5rem;
+  }
+
+  .level-title {
+    font-size: 1.2rem;
+  }
+
+  .level-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,25 @@
+/* Home 页面基础样式 */
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  /* 为悬浮按钮预留安全区域 */
+  padding-bottom: 6rem;
+  transition: all 0.3s ease;
+}
+
+.home-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  width: 100%;
+}

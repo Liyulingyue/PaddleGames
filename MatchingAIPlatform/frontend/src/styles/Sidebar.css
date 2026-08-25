@@ -1,0 +1,450 @@
+/* Sidebar 样式 */
+@import "buttons.css";
+
+/* Sidebar 遮罩层 */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1500; /* 遮罩层在sidebar之下 */
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Sidebar 主容器 */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 320px;
+  background: linear-gradient(180deg, rgba(26, 35, 47, 0.98) 0%, rgba(35, 47, 62, 0.98) 50%, rgba(44, 62, 80, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 2000; /* 提高z-index确保覆盖页面内容 */
+  border-right: 3px solid #3498db;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.4);
+  border-radius: 0 24px 24px 0;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 50%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sidebar-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23sidebar-pattern)"/></svg>');
+  pointer-events: none;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+  animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Sidebar 内容区域 */
+.sidebar-content {
+  padding: 2rem;
+  color: white;
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Sidebar 头部 */
+.sidebar-header {
+  text-align: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: #ecf0f1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #3498db, #9b59b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sidebar-header p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Sidebar 导航 */
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sidebar-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: var(--btn-transition);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.5s ease;
+}
+
+.sidebar-button:hover::before {
+  left: 100%;
+}
+
+.sidebar-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(6px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-button:active {
+  transform: translateX(6px) scale(0.98);
+}
+
+.sidebar-button.active {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border-color: #3498db;
+  color: white;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+  transform: translateX(8px);
+}
+
+.sidebar-button.active::after {
+  content: '✓';
+  position: absolute;
+  right: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+}
+
+/* GitHub链接按钮特殊样式 */
+.sidebar-button.github-link {
+  background: linear-gradient(135deg, rgba(24, 23, 23, 0.8) 0%, rgba(33, 37, 41, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.sidebar-button.github-link:hover {
+  background: linear-gradient(135deg, rgba(33, 37, 41, 0.9) 0%, rgba(52, 58, 64, 0.9) 100%);
+  transform: translateX(6px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-button.github-link::before {
+  content: '🔗';
+  position: absolute;
+  right: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-button.github-link:hover::before {
+  opacity: 1;
+}
+
+/* Sidebar 页脚 */
+.sidebar-footer {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  margin: 0;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* 智能悬浮按钮 */
+.floating-sidebar-btn {
+  position: fixed;
+  width: 64px;
+  height: 64px;
+  background: var(--accent-gradient);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: white;
+  cursor: grab;
+  box-shadow: 0 8px 25px var(--accent-shadow);
+  transition: var(--btn-transition);
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(15px);
+  overflow: hidden;
+  user-select: none;
+}
+
+.floating-sidebar-btn.dragging {
+  cursor: grabbing;
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px var(--accent-shadow-hover);
+  border-color: rgba(255, 255, 255, 0.4);
+  transition: none;
+}
+
+.floating-sidebar-btn.dragging .button-icon {
+  transform: scale(0.9);
+}
+
+.floating-sidebar-btn.dragging .button-label {
+  opacity: 0.7;
+}
+
+.floating-sidebar-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.floating-sidebar-btn:hover::before {
+  opacity: 1;
+}
+
+.floating-sidebar-btn:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 12px 35px var(--accent-shadow-hover);
+}
+
+.floating-sidebar-btn:active {
+  transform: scale(0.95) rotate(5deg);
+  box-shadow: 0 4px 15px var(--accent-shadow);
+}
+
+.floating-sidebar-btn.open {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+}
+
+.floating-sidebar-btn.open:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  box-shadow: 0 12px 35px rgba(231, 76, 60, 0.6);
+}
+
+.button-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.floating-sidebar-btn:hover .button-icon {
+  transform: scale(1.1);
+}
+
+.button-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-top: 2px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.floating-sidebar-btn:hover .button-label {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* 拖拽提示 */
+.drag-hint {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+.floating-sidebar-btn:hover .drag-hint {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.floating-sidebar-btn.dragging .drag-hint {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  background: rgba(255, 107, 53, 0.9);
+}
+
+/* 悬浮按钮不需要预留页面空间，移除安全区域样式 */
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 300px;
+  }
+
+  .sidebar-content {
+    padding: 1.5rem;
+  }
+
+  .sidebar-header h3 {
+    font-size: 1.4rem;
+  }
+
+  .sidebar-button {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .floating-sidebar-btn {
+    width: 58px;
+    height: 58px;
+  }
+
+  .button-icon {
+    font-size: 1.4rem;
+  }
+
+  .button-label {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px;
+  }
+
+  .sidebar-content {
+    padding: 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .sidebar-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .sidebar-button {
+    padding: 0.8rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .floating-sidebar-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .button-icon {
+    font-size: 1.3rem;
+  }
+
+  .button-label {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 260px;
+  }
+
+  .sidebar-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .sidebar-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .sidebar-button {
+    padding: 0.75rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .floating-sidebar-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .button-icon {
+    font-size: 1.2rem;
+  }
+
+  .button-label {
+    font-size: 0.55rem;
+  }
+}
